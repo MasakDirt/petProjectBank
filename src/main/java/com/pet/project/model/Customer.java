@@ -6,6 +6,7 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Table(name = "customer")
@@ -28,21 +29,22 @@ public class Customer {
 
     @Pattern(regexp = NAME_REGEXP,
             message = "Must start with a capital letter and followed by one or more lowercase")
-    @NotBlank(message = "Your first name cannot be blank")
+    @NotNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Pattern(regexp = NAME_REGEXP,
             message = "Must start with a capital letter and followed by one or more lowercase")
-    @NotBlank(message = "Your last name cannot be blank")
+    @NotNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Email(message = "Write a valid e-mail address")
     @NotBlank
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Password cannot be blank!!!")
     @Column(nullable = false)
     private String password;
 

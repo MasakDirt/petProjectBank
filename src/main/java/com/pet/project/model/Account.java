@@ -4,6 +4,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -24,14 +26,14 @@ public class Account {
     private long id;
 
     @Column(nullable = false)
-    private BigDecimal account = BigDecimal.ZERO;
-
-    @ManyToOne
-    private Transaction transaction;
+    @NotNull
+    @DecimalMin(value = "0", message = "Account cannot be less than 0")
+    private BigDecimal account;
     @ManyToOne
     private TransactionHistory history;
 
     public Account() {
+        account = BigDecimal.ZERO;
     }
 
     public long getId() {
@@ -40,10 +42,6 @@ public class Account {
 
     public BigInteger getAccount() {
         return account.toBigInteger();
-    }
-
-    public Transaction getTransaction() {
-        return transaction;
     }
 
     public TransactionHistory getHistory() {
@@ -56,10 +54,6 @@ public class Account {
 
     public void setAccount(BigDecimal account) {
         this.account = account;
-    }
-
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
     }
 
     public void setHistory(TransactionHistory history) {
