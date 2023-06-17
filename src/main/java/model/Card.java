@@ -14,8 +14,12 @@ public class Card {
     private String number;
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account cardAccount;
+
+    @ManyToOne
     @JoinColumn(name = "owner_id")
-    Customer owner;
+    private Customer owner;
 
     public Card() {
         createNumberCard();
@@ -29,6 +33,10 @@ public class Card {
         return number;
     }
 
+    public Account getCardAccount() {
+        return cardAccount;
+    }
+
     public Customer getOwner() {
         return owner;
     }
@@ -37,8 +45,22 @@ public class Card {
         this.id = id;
     }
 
+    public void setCardAccount(Account cardAccount) {
+        this.cardAccount = cardAccount;
+    }
+
     public void setOwner(Customer owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", cardAccount=" + cardAccount +
+                ", owner=" + owner +
+                '}';
     }
 
     private void createNumberCard() {
