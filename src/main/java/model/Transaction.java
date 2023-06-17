@@ -12,9 +12,6 @@ public class Transaction {
     @Id
     @GeneratedValue
     private long id;
-
-    @ManyToOne
-    private TransactionHistory history;
     @CreationTimestamp
     private LocalDateTime doneAt;
 
@@ -36,10 +33,6 @@ public class Transaction {
         return id;
     }
 
-    public TransactionHistory getHistory() {
-        return history;
-    }
-
     public LocalDateTime getDoneAt() {
         return doneAt;
     }
@@ -54,10 +47,6 @@ public class Transaction {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public void setHistory(TransactionHistory history) {
-        this.history = history;
     }
 
     public void setDoneAt(LocalDateTime createdAt) {
