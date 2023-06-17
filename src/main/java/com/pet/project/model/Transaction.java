@@ -1,6 +1,8 @@
 package com.pet.project.model;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,8 +13,18 @@ import java.time.LocalDateTime;
 @Table
 @Entity
 public class Transaction {
+
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "sequence-generator")
+    @GenericGenerator(
+            name = "sequence-generator",
+            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
+            parameters = {
+                    @Parameter(name = "sequence_name", value = "transaction_sequence"),
+                    @Parameter(name = "initial_value", value = "1"),
+                    @Parameter(name = "increment_size", value = "1")
+            }
+    )
     private long id;
     @CreationTimestamp
     private LocalDateTime doneAt;
@@ -36,6 +48,7 @@ public class Transaction {
     public void setDoneAt(LocalDateTime createdAt) {
         this.doneAt = createdAt;
     }
+
     @Override
     public String toString() {
         return "Transaction{" +
