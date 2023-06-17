@@ -1,10 +1,10 @@
-package model;
+package com.pet.project.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-@Table
+@Table(name = "account")
 @Entity
 public class Account {
     @Id

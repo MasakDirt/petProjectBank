@@ -1,4 +1,4 @@
-package model;
+package com.pet.project.model;
 
 import org.hibernate.annotations.CreationTimestamp;
 
