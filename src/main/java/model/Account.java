@@ -2,6 +2,7 @@ package model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Table
 @Entity
@@ -18,15 +19,15 @@ public class Account {
     @ManyToOne
     private TransactionHistory history;
 
-    Account(){
+    public Account() {
     }
 
     public long getId() {
         return id;
     }
 
-    public BigDecimal getAccount() {
-        return account;
+    public BigInteger getAccount() {
+        return account.toBigInteger();
     }
 
     public Transaction getTransaction() {
