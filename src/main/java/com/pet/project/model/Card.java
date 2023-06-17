@@ -1,16 +1,16 @@
-package model;
+package com.pet.project.model;
 
 import javax.persistence.*;
 import java.util.Random;
 
-@Table
+@Table(name = "card")
 @Entity
 public class Card {
     @Id
     @GeneratedValue
     private long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String number;
 
     @ManyToOne

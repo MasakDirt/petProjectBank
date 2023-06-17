@@ -1,15 +1,15 @@
-package model;
+package com.pet.project.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@Table
+@Table(name = "customer")
 @Entity
 public class Customer {
     private static final String NAME_REGEXP = "[A-Z][a-z]+(-[A-Z][a-z]+){0,1}";
+
     @Id
     @GeneratedValue
     private long id;
@@ -28,7 +28,7 @@ public class Customer {
 
     @Email(message = "Write a valid e-mail address")
     @NotBlank
-    @Column(name = "e-mail", nullable = false)
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -36,7 +36,6 @@ public class Customer {
 
     @ManyToOne
     @JoinColumn(name = "card_id")
-    @NotNull
     private Card card;
 
     public Customer(){
