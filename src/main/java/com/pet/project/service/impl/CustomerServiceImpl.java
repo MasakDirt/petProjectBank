@@ -49,7 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer update(Customer customer) {
         if (customer != null) {
             Customer oldCustomer = readById(customer.getId());
-            return customerRepository.save(oldCustomer);
+            if (oldCustomer != null){
+                return customerRepository.save(customer);
+            }
         }
         throw new NullEntityReferenceException("Customer cannot be 'null'");
     }

@@ -12,7 +12,6 @@ public interface CustomerService {
     Customer update(Customer customer);
 
     Customer readById(long id);
-
     Customer findByEmail(String email);
 
     List<Customer> getAll();
