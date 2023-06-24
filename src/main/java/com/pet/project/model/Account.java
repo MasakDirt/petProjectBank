@@ -1,5 +1,6 @@
 package com.pet.project.model;
 
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -8,7 +9,9 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
+@Getter
+@Setter
+@AllArgsConstructor
 @Table(name = "account")
 @Entity
 public class Account {
