@@ -7,10 +7,9 @@ import com.pet.project.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -28,11 +27,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer readById(long id) {
-        Optional<Customer> optional = customerRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        }
-        throw new EntityNotFoundException("Customer with id " + id + " not found");
+       return  customerRepository.findById(id).orElseThrow(() ->
+               new NoSuchElementException("Customer with id " + id + " not found"));
     }
 
     @Override

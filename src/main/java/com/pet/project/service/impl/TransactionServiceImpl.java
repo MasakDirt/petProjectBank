@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -42,11 +41,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction readById(long id) {
-        Optional<Transaction> transaction = transactionRepository.findById(id);
-        if (transaction.isPresent()) {
-            return transaction.get();
-        }
-        throw new NoSuchElementException("Transaction with id " + id + " not found");
+        return transactionRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Transaction with id " + id + " not found"));
     }
 
     @Override

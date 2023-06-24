@@ -8,9 +8,9 @@ import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -48,11 +48,8 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card readById(long id) {
-        Optional<Card> optional = cardRepository.findById(id);
-        if (optional.isPresent()) {
-            return optional.get();
-        }
-        throw new EntityNotFoundException("Card with id " + id + " not found");
+        return cardRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Card with id " + id + " not found"));
     }
 
     @Override

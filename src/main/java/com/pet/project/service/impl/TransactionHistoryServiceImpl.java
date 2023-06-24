@@ -8,9 +8,8 @@ import com.pet.project.service.TransactionHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class TransactionHistoryServiceImpl implements TransactionHistoryService {
@@ -34,7 +33,7 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
 
     @Override
     public TransactionHistory update(TransactionHistory history) {
-        if (history != null){
+        if (history != null) {
             TransactionHistory oldHistory = readById(history.getId());
             return transactionHistoryRepository.save(history);
         }
@@ -43,11 +42,8 @@ public class TransactionHistoryServiceImpl implements TransactionHistoryService 
 
     @Override
     public TransactionHistory readById(long id) {
-        Optional<TransactionHistory> history = transactionHistoryRepository.findById(id);
-        if (history.isPresent()){
-            return history.get();
-        }
-        throw new EntityNotFoundException("TransactionalHistory with id " + id + " not found");
+        return transactionHistoryRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("TransactionHistory with id " + id + " not found"));
     }
 
     @Override

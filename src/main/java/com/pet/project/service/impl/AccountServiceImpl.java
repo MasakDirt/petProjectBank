@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -46,11 +45,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account readById(long id) {
-        Optional<Account> account = accountRepository.findById(id);
-        if (account.isPresent()) {
-            return account.get();
-        }
-        throw new NoSuchElementException(String.format("Account with id: %d not found", id));
+        return accountRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Account with id " + id + " not found"));
     }
 
     @Override
