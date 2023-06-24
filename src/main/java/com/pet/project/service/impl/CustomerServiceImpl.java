@@ -38,18 +38,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void delete(long id) {
         Customer customer = readById(id);
-        if (customer != null) {
-            customerRepository.delete(customer);
-        }else {
-            throw new EntityNotFoundException("Customer with id " + id + " not found");
-        }
+        customerRepository.delete(customer);
     }
 
     @Override
     public Customer update(Customer customer) {
         if (customer != null) {
             Customer oldCustomer = readById(customer.getId());
-            if (oldCustomer != null){
+            if (oldCustomer != null) {
                 return customerRepository.save(customer);
             }
         }
