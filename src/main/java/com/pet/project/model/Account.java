@@ -31,6 +31,8 @@ public class Account {
     private BigDecimal account;
     @ManyToOne
     private TransactionHistory history;
+    @ManyToOne
+    private Card card;
 
     public Account() {
         account = BigDecimal.ZERO;
