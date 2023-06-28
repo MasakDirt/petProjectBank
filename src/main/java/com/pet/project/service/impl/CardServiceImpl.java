@@ -11,12 +11,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class CardServiceImpl implements CardService {
-    CardRepository cardRepository;
+   private final CardRepository cardRepository;
 
     @Override
     public Card create(Card card) {
@@ -30,16 +29,14 @@ public class CardServiceImpl implements CardService {
     @Override
     public void delete(long id) {
         Card card = readById(id);
-        if (card != null) {
-            cardRepository.delete(card);
-        }
+        cardRepository.delete(card);
     }
 
     @Override
     public Card update(Card card) {
         if (card != null) {
             Card oldCard = readById(card.getId());
-            if (oldCard != null){
+            if (oldCard != null) {
                 return cardRepository.save(card);
             }
         }
@@ -55,25 +52,22 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card readByNumber(String number) {
         if (number != null) {
-            return cardRepository.findCardByNumber(number);
+            return cardRepository.findCardByNumber(number).orElseThrow(() ->
+                    new NoSuchElementException("Card with number " + number + " not found"));
         }
         throw new NullEntityReferenceException("Number cannot be 'null'");
     }
 
     @Override
-    public Card readByOwner(Customer owner) {
-        Optional<Card> optional = cardRepository.findCardByOwner(owner);
-        if (optional.isPresent()) {
-            return optional.get();
-        }
-        throw new NullEntityReferenceException("Owner cannot be null!");
+    public Card readByOwner(Customer owner, long cardId) {
+        return cardRepository.findCardByOwnerAndId(owner, cardId).orElseThrow(() ->
+                new NoSuchElementException(owner.getFirstName() + " " + owner.getLastName() + " card with id: " + cardId + " not found"));
     }
 
     @Override
     public List<Card> getAllByOwner(Customer owner) {
         if (owner != null) {
-            List<Card> ownersCards = cardRepository.findAllByOwner(owner);
-            return ownersCards.isEmpty() ? new ArrayList<>() : ownersCards;
+            return owner.getCards();
         }
         throw new NullEntityReferenceException("Owner cannot be null!");
     }

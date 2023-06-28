@@ -11,7 +11,7 @@ public interface CardService {
     Card update(Card card);
     Card readById(long id);
     Card readByNumber(String number);
-    Card readByOwner(Customer customer);
+    Card readByOwner(Customer customer, long id);
     List<Card> getAllByOwner(Customer owner);
     List<Card> getAll();
 }

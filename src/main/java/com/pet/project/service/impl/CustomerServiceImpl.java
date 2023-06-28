@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    CustomerRepository customerRepository;
+   private final CustomerRepository customerRepository;
 
     @Override
     public Customer create(Customer customer) {

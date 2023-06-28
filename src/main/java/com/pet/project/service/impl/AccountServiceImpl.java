@@ -2,22 +2,19 @@ package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Account;
-import com.pet.project.model.entity.Card;
-import com.pet.project.model.entity.TransactionHistory;
 import com.pet.project.repository.AccountRepository;
 import com.pet.project.service.AccountService;
-import com.pet.project.service.CardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    CardService cardService;
+   private final AccountRepository accountRepository;
 
     @Override
     public Account create(Account account) {
@@ -37,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account update(Account account) {
         if (account != null) {
-//            Account oldAcc = readById(account.getId());
+            Account oldAcc = readById(account.getId());
             return accountRepository.save(account);
         }
         throw new NullEntityReferenceException("Account cannot be 'null'");
@@ -50,14 +47,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account readByCard(long cardId) {
-        Card card = cardService.readById(cardId);
-        return card.getAccount();
-    }
-
-    @Override
-    public TransactionHistory getHistory(Account account) {
-        Account checkForExceptions = readById(account.getId());
-        return checkForExceptions.getHistory();
+    public List<Account> getAll() {
+        List<Account> accounts = accountRepository.findAll();
+        return accounts.isEmpty() ? new ArrayList<>() : accounts;
     }
 }

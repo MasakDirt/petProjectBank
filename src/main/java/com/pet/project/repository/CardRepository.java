@@ -16,14 +16,12 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Override
     void delete(Card card);
 
-    Optional<Card> findCardByOwner(Customer owner);
+    Optional<Card> findCardByOwnerAndId(Customer owner, long id);
 
-    Card findCardByNumber(String number);
+    Optional<Card> findCardByNumber(String number);
 
     @Override
     Optional<Card> findById(Long id);
-
-    List<Card> findAllByOwner(Customer owner);
 
     @Override
     List<Card> findAll();
