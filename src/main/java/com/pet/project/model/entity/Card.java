@@ -1,4 +1,4 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -10,9 +10,9 @@ import java.util.Random;
 @Entity
 public class Card {
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "card-generator")
     @GenericGenerator(
-            name = "sequence-generator",
+            name = "card-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "card_sequence"),
@@ -25,9 +25,9 @@ public class Card {
     @Column(nullable = false)
     private String number;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private Account cardAccount;
+    private Account account;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -45,8 +45,8 @@ public class Card {
         return number;
     }
 
-    public Account getCardAccount() {
-        return cardAccount;
+    public Account getAccount() {
+        return account;
     }
 
     public Customer getOwner() {
@@ -57,8 +57,8 @@ public class Card {
         this.id = id;
     }
 
-    public void setCardAccount(Account cardAccount) {
-        this.cardAccount = cardAccount;
+    public void setAccount(Account cardAccount) {
+        this.account = cardAccount;
     }
 
     public void setOwner(Customer owner) {
@@ -70,7 +70,7 @@ public class Card {
         return "Card{" +
                 "id=" + id +
                 ", number='" + number + '\'' +
-                ", cardAccount=" + cardAccount +
+                ", cardAccount=" + account +
                 ", owner=" + owner +
                 '}';
     }

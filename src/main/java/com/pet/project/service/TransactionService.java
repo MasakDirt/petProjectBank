@@ -1,6 +1,6 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Transaction;
+import com.pet.project.model.entity.Transaction;
 
 import java.util.List;
 

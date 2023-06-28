@@ -1,23 +1,21 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Table
 @Entity
 public class Transaction {
-
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "transaction-generator")
     @GenericGenerator(
-            name = "sequence-generator",
+            name = "transaction-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "transaction_sequence"),
@@ -26,8 +24,17 @@ public class Transaction {
             }
     )
     private long id;
+
+    @Column(name = "done_at")
     @CreationTimestamp
     private LocalDateTime doneAt;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
+
+    @DecimalMin(value = "0", message = "Account cannot be less than 0")
+    private BigDecimal balanceAfter;
 
     public Transaction() {
         doneAt = LocalDateTime.now();
@@ -41,12 +48,28 @@ public class Transaction {
         return doneAt;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
+    public BigDecimal getBalanceAfter() {
+        return balanceAfter;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
 
     public void setDoneAt(LocalDateTime createdAt) {
         this.doneAt = createdAt;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public void setBalanceAfter(BigDecimal balanceAfter) {
+        this.balanceAfter = balanceAfter;
     }
 
     @Override

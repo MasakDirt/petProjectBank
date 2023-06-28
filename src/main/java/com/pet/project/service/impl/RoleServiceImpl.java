@@ -1,7 +1,7 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Role;
+import com.pet.project.model.entity.Role;
 import com.pet.project.repository.RoleRepository;
 import com.pet.project.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;

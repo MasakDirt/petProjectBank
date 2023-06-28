@@ -1,5 +1,8 @@
 package com.pet.project.model;
 
+import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.Transaction;
+import com.pet.project.model.entity.TransactionHistory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +41,7 @@ public class AccountTests {
 
         validAccount = new Account();
         validAccount.setId(1);
-        validAccount.setAccount(new BigDecimal(10000));
+        validAccount.setBalance(new BigDecimal(10000));
         validAccount.setHistory(transactionHistory);
     }
 
@@ -51,7 +54,7 @@ public class AccountTests {
     @Test
     public void checkIfDontSetAccount() {
         Account account = new Account();
-        assertEquals(BigInteger.ZERO, account.getAccount());
+        assertEquals(BigInteger.ZERO, account.getBalance());
     }
 
     @ParameterizedTest
@@ -59,7 +62,7 @@ public class AccountTests {
     public void checkInvalidAccount(BigDecimal input, BigDecimal error) {
         Account wrongAccount = new Account();
         wrongAccount.setId(2);
-        wrongAccount.setAccount(input);
+        wrongAccount.setBalance(input);
 
         Set<ConstraintViolation<Account>> violations = getViolations(wrongAccount);
         assertEquals(1, violations.size());
@@ -78,7 +81,7 @@ public class AccountTests {
     public void checkZeroAccount(){
         Account actual = new Account();
         actual.setId(3);
-        actual.setAccount(BigDecimal.valueOf(0));
+        actual.setBalance(BigDecimal.valueOf(0));
 
         Set<ConstraintViolation<Account>> violations = getViolations(actual);
         assertEquals(0, violations.size());

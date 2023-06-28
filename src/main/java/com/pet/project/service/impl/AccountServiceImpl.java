@@ -1,9 +1,9 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Account;
-import com.pet.project.model.Card;
-import com.pet.project.model.TransactionHistory;
+import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.TransactionHistory;
 import com.pet.project.repository.AccountRepository;
 import com.pet.project.service.AccountService;
 import com.pet.project.service.CardService;
@@ -37,7 +37,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account update(Account account) {
         if (account != null) {
-            Account oldAcc = readById(account.getId());
+//            Account oldAcc = readById(account.getId());
             return accountRepository.save(account);
         }
         throw new NullEntityReferenceException("Account cannot be 'null'");
@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account readByCard(long cardId) {
         Card card = cardService.readById(cardId);
-        return card.getCardAccount();
+        return card.getAccount();
     }
 
     @Override

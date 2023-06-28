@@ -1,6 +1,6 @@
 package com.pet.project.repository;
 
-import com.pet.project.model.Customer;
+import com.pet.project.model.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,8 +1,8 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Transaction;
-import com.pet.project.model.TransactionHistory;
+import com.pet.project.model.entity.Transaction;
+import com.pet.project.model.entity.TransactionHistory;
 import com.pet.project.repository.TransactionHistoryRepository;
 import com.pet.project.service.TransactionHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;

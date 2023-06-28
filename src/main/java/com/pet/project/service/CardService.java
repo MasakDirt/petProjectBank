@@ -1,7 +1,7 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Card;
-import com.pet.project.model.Customer;
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.Customer;
 
 import java.util.List;
 

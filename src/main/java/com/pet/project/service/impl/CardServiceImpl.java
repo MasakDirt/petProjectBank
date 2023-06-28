@@ -1,8 +1,8 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Card;
-import com.pet.project.model.Customer;
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.Customer;
 import com.pet.project.repository.CardRepository;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;

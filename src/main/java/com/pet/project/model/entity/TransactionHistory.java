@@ -1,5 +1,7 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -9,11 +11,13 @@ import java.util.List;
 
 @Table
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionHistory {
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "transaction-history-generator")
     @GenericGenerator(
-            name = "sequence-generator",
+            name = "transaction-history-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "transactionHistory_sequence"),
@@ -23,10 +27,13 @@ public class TransactionHistory {
     )
     private long id;
 
-    @OneToMany
     @NotNull
+    @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
-    public TransactionHistory(){}
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     public long getId() {
         return id;
@@ -36,12 +43,20 @@ public class TransactionHistory {
         return transactions;
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     @Override

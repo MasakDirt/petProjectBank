@@ -1,7 +1,7 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Customer;
+import com.pet.project.model.entity.Customer;
 import com.pet.project.repository.CustomerRepository;
 import com.pet.project.service.CustomerService;
 import lombok.AllArgsConstructor;

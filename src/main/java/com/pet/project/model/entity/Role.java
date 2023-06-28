@@ -1,4 +1,4 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
 
 import lombok.Getter;

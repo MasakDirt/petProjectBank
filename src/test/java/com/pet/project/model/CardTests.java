@@ -1,5 +1,8 @@
 package com.pet.project.model;
 
+import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.Customer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +20,7 @@ public class CardTests {
     static void setUp(){
         validCard = new Card();
         validCard.setId(1);
-        validCard.setCardAccount(new Account());
+        validCard.setAccount(new Account());
         validCard.setOwner(new Customer());
     }
 

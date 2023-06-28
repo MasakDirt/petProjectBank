@@ -1,4 +1,4 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,6 +9,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,9 +17,9 @@ import java.math.BigInteger;
 @Entity
 public class Account {
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "account-generator")
     @GenericGenerator(
-            name = "sequence-generator",
+            name = "account-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "account_sequence"),
@@ -31,22 +32,25 @@ public class Account {
     @Column(nullable = false)
     @NotNull
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
-    private BigDecimal account;
+    private BigDecimal balance;
+
     @ManyToOne
+    @JoinColumn(name = "transaction_history_id")
     private TransactionHistory history;
-    @ManyToOne
+
+    @OneToOne(mappedBy = "account")
     private Card card;
 
     public Account() {
-        account = BigDecimal.ZERO;
+        balance = BigDecimal.ZERO;
     }
 
     public long getId() {
         return id;
     }
 
-    public BigInteger getAccount() {
-        return account.toBigInteger();
+    public BigInteger getBalance() {
+        return balance.toBigInteger();
     }
 
     public TransactionHistory getHistory() {
@@ -57,8 +61,8 @@ public class Account {
         this.id = id;
     }
 
-    public void setAccount(BigDecimal account) {
-        this.account = account;
+    public void setBalance(BigDecimal account) {
+        this.balance = account;
     }
 
     public void setHistory(TransactionHistory history) {
@@ -69,7 +73,7 @@ public class Account {
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", account=" + account +
+                ", account=" + balance +
                 ", transaction history=" + history +
                 '}';
     }

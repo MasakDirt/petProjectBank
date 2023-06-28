@@ -1,5 +1,6 @@
-package com.pet.project.model;
+package com.pet.project.model.entity;
 
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -8,16 +9,18 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Table(name = "customer")
 @Entity
+@NoArgsConstructor
 public class Customer {
     private static final String NAME_REGEXP = "[A-Z][a-z]+(-[A-Z][a-z]+){0,1}";
 
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "customer-generator")
     @GenericGenerator(
-            name = "sequence-generator",
+            name = "customer-generator",
             strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
             parameters = {
                     @Parameter(name = "sequence_name", value = "customer_sequence"),
@@ -44,17 +47,16 @@ public class Customer {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Password cannot be blank!!!")
+    @NotBlank(message = "Password cannot be blank!")
     @Column(nullable = false)
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "card_id")
-    private Card card;
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    public Customer(){
-
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+    private List<Card> myCards;
 
     public long getId() {
         return id;
@@ -76,8 +78,12 @@ public class Customer {
         return password;
     }
 
-    public Card getCard() {
-        return card;
+    public Role getRole() {
+        return role;
+    }
+
+    public List<Card> getCard() {
+        return myCards;
     }
 
     public void setId(long id) {
@@ -100,8 +106,12 @@ public class Customer {
         this.password = password;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setCard(List<Card> cards) {
+        this.myCards = cards;
     }
 
     @Override

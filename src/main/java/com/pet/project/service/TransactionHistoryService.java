@@ -1,7 +1,7 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Transaction;
-import com.pet.project.model.TransactionHistory;
+import com.pet.project.model.entity.Transaction;
+import com.pet.project.model.entity.TransactionHistory;
 
 import java.util.List;
 

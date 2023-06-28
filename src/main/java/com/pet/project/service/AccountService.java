@@ -1,7 +1,7 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Account;
-import com.pet.project.model.TransactionHistory;
+import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.TransactionHistory;
 
 public interface AccountService {
     Account create(Account account);
