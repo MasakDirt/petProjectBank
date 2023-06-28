@@ -31,8 +31,7 @@ public class TransactionHistory {
     @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
+    @OneToOne(mappedBy = "history")
     private Account account;
 
     public long getId() {
