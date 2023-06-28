@@ -1,6 +1,8 @@
 package com.pet.project.model.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -34,7 +36,7 @@ public class Account {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balance;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "transaction_history_id")
     private TransactionHistory history;
 

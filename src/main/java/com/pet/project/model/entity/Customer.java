@@ -82,7 +82,7 @@ public class Customer {
         return role;
     }
 
-    public List<Card> getCard() {
+    public List<Card> getCards() {
         return myCards;
     }
 
@@ -121,6 +121,7 @@ public class Customer {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", cards='" + myCards + '\'' +
                 '}';
     }
 }
