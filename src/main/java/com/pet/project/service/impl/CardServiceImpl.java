@@ -3,6 +3,7 @@ package com.pet.project.service.impl;
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Customer;
+import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.CardRepository;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.NoSuchElementException;
 @Service
 @AllArgsConstructor
 public class CardServiceImpl implements CardService {
-   private final CardRepository cardRepository;
+    private final CardRepository cardRepository;
 
     @Override
     public Card create(Card card) {
@@ -61,7 +62,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card readByOwner(Customer owner, long cardId) {
         return cardRepository.findCardByOwnerAndId(owner, cardId).orElseThrow(() ->
-                new NoSuchElementException(owner.getFirstName() + " " + owner.getLastName() + " card with id: " + cardId + " not found"));
+                new NoSuchElementException(owner.getFirstName() + "'s " + owner.getLastName() + " card with id: " + cardId + " not found"));
     }
 
     @Override
@@ -69,12 +70,18 @@ public class CardServiceImpl implements CardService {
         if (owner != null) {
             return owner.getCards();
         }
-        throw new NullEntityReferenceException("Owner cannot be null!");
+        throw new NullEntityReferenceException("Owner cannot be 'null'!");
     }
 
     @Override
     public List<Card> getAll() {
         List<Card> cards = cardRepository.findAll();
         return cards.isEmpty() ? new ArrayList<>() : cards;
+    }
+
+    @Override
+    public List<Transaction> getHistory(long cardId) {
+        Card card = readById(cardId);
+        return card.getAccount().getHistory().getTransactions();
     }
 }
