@@ -36,9 +36,7 @@ public class Transaction {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balanceAfter;
 
-    public Transaction() {
-        doneAt = LocalDateTime.now();
-    }
+    public Transaction() {}
 
     public long getId() {
         return id;
