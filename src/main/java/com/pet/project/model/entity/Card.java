@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Random;
 
 @Table(name = "card")
@@ -63,6 +64,19 @@ public class Card {
 
     public void setOwner(Customer owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return id == card.id && Objects.equals(number, card.number) && Objects.equals(owner, card.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, owner);
     }
 
     @Override

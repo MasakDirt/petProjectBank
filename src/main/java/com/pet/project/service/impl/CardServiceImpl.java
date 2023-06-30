@@ -82,6 +82,6 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Transaction> getHistory(long cardId) {
         Card card = readById(cardId);
-        return card.getAccount().getHistory().getTransactions();
+        return card.getAccount().getTransactions();
     }
 }

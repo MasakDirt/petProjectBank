@@ -3,21 +3,40 @@ package com.pet.project.service.impl;
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.TransactionRepository;
+import com.pet.project.service.AccountService;
 import com.pet.project.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    @Autowired
     TransactionRepository transactionRepository;
+    AccountService accountService;
 
     @Override
-    public Transaction create(Transaction transaction) {
+    public Transaction create(Transaction transaction, int sum) {
         try {
+
+            transaction.setBalanceAfter(new BigDecimal(
+                    transaction.getAccount().getBalance().subtract(BigInteger.valueOf(sum)))
+            );
+
+            transaction.getAccount().setBalance(transaction.getBalanceAfter());
+
+            transaction.getRecipientCard().getAccount().setBalance(new BigDecimal(
+                    transaction.getRecipientCard().getAccount().getBalance().add(BigInteger.valueOf(sum)))
+            );
+
+            accountService.update(transaction.getAccount());
+            accountService.update(transaction.getRecipientCard().getAccount());
+
+
             return transactionRepository.save(transaction);
         } catch (IllegalArgumentException exception) {
             throw new NullEntityReferenceException("Transaction cannot be 'null'");
@@ -32,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction update(Transaction transaction) {
-        if (transaction != null){
+        if (transaction != null) {
             Transaction oldTransaction = readById(transaction.getId());
             return transactionRepository.save(transaction);
         }

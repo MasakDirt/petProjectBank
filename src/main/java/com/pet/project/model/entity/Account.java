@@ -11,6 +11,8 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,12 +38,12 @@ public class Account {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balance;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transaction_history_id")
-    private TransactionHistory history;
-
     @OneToOne(mappedBy = "account")
     private Card card;
+
+    @NotNull
+    @OneToMany(mappedBy = "account")
+    private List<Transaction> transactions;
 
     public Account() {
         balance = BigDecimal.ZERO;
@@ -55,8 +57,13 @@ public class Account {
         return balance.toBigInteger();
     }
 
-    public TransactionHistory getHistory() {
-        return history;
+    public Card getCard() {
+        return card;
+    }
+
+
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
     public void setId(long id) {
@@ -67,8 +74,12 @@ public class Account {
         this.balance = account;
     }
 
-    public void setHistory(TransactionHistory history) {
-        this.history = history;
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Override
@@ -76,7 +87,19 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", account=" + balance +
-                ", transaction history=" + history +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return id == account.id && balance.equals(account.balance) && Objects.equals(card, account.card);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, balance, card);
     }
 }

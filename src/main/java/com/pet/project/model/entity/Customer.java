@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Objects;
 
 @Table(name = "customer")
 @Entity
@@ -115,6 +116,19 @@ public class Customer {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return id == customer.id && Objects.equals(email, customer.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email);
+    }
+
+    @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
@@ -123,5 +137,9 @@ public class Customer {
                 ", email='" + email + '\'' +
                 ", cards='" + myCards + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
     }
 }

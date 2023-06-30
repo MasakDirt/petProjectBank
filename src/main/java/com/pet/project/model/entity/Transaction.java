@@ -36,7 +36,13 @@ public class Transaction {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balanceAfter;
 
-    public Transaction() {}
+    @ManyToOne
+    @JoinColumn(name = "recipient_card_id")
+    private Card recipientCard;
+
+    public Transaction() {
+        doneAt = LocalDateTime.now();
+    }
 
     public long getId() {
         return id;
@@ -54,6 +60,10 @@ public class Transaction {
         return balanceAfter;
     }
 
+    public Card getRecipientCard() {
+        return recipientCard;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
@@ -68,6 +78,10 @@ public class Transaction {
 
     public void setBalanceAfter(BigDecimal balanceAfter) {
         this.balanceAfter = balanceAfter;
+    }
+
+    public void setRecipientCard(Card recipientCard) {
+        this.recipientCard = recipientCard;
     }
 
     @Override

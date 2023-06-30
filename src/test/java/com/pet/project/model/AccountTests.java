@@ -1,8 +1,8 @@
 package com.pet.project.model;
 
 import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
-import com.pet.project.model.entity.TransactionHistory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,12 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static com.pet.project.model.ValidatorForTests.*;
+import static com.pet.project.model.ValidatorForTests.getViolations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -36,13 +35,10 @@ public class AccountTests {
         Transaction third = new Transaction();
         first.setId(3);
 
-        TransactionHistory transactionHistory = new TransactionHistory();
-        transactionHistory.setTransactions(new ArrayList<>(Arrays.asList(first, second, third)));
-
         validAccount = new Account();
         validAccount.setId(1);
         validAccount.setBalance(new BigDecimal(10000));
-        validAccount.setHistory(transactionHistory);
+        validAccount.setTransactions(List.of(first,second,third));
     }
 
     @Test
@@ -63,6 +59,8 @@ public class AccountTests {
         Account wrongAccount = new Account();
         wrongAccount.setId(2);
         wrongAccount.setBalance(input);
+        wrongAccount.setCard(new Card());
+        wrongAccount.setTransactions(List.of(new Transaction()));
 
         Set<ConstraintViolation<Account>> violations = getViolations(wrongAccount);
         assertEquals(1, violations.size());
@@ -82,6 +80,8 @@ public class AccountTests {
         Account actual = new Account();
         actual.setId(3);
         actual.setBalance(BigDecimal.valueOf(0));
+        actual.setCard(new Card());
+        actual.setTransactions(List.of(new Transaction()));
 
         Set<ConstraintViolation<Account>> violations = getViolations(actual);
         assertEquals(0, violations.size());
