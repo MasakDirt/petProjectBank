@@ -5,24 +5,12 @@ import com.pet.project.model.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
-    @Override
-    <S extends Card> S save(S card);
-
-    @Override
-    void delete(Card card);
 
     Optional<Card> findCardByOwnerAndId(Customer owner, long id);
 
     Optional<Card> findCardByNumber(String number);
-
-    @Override
-    Optional<Card> findById(Long id);
-
-    @Override
-    List<Card> findAll();
 }
