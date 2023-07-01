@@ -1,8 +1,5 @@
 package com.pet.project.model.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Random;
@@ -10,17 +7,9 @@ import java.util.Random;
 @Table(name = "card")
 @Entity
 public class Card {
+
     @Id
-    @GeneratedValue(generator = "card-generator")
-    @GenericGenerator(
-            name = "card-generator",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @Parameter(name = "sequence_name", value = "card_sequence"),
-                    @Parameter(name = "initial_value", value = "1"),
-                    @Parameter(name = "increment_size", value = "1")
-            }
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)

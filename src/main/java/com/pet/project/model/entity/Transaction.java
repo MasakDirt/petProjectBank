@@ -1,8 +1,6 @@
 package com.pet.project.model.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
@@ -13,16 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Transaction {
     @Id
-    @GeneratedValue(generator = "transaction-generator")
-    @GenericGenerator(
-            name = "transaction-generator",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @Parameter(name = "sequence_name", value = "transaction_sequence"),
-                    @Parameter(name = "initial_value", value = "1"),
-                    @Parameter(name = "increment_size", value = "1")
-            }
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "done_at")

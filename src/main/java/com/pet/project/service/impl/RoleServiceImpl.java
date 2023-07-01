@@ -5,6 +5,7 @@ import com.pet.project.model.entity.Role;
 import com.pet.project.repository.RoleRepository;
 import com.pet.project.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,7 +20,7 @@ public class RoleServiceImpl implements RoleService {
     public Role create(Role role) {
         try {
             return roleRepository.save(role);
-        } catch (IllegalArgumentException exception) {
+        } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Role cannot be 'null'");
         }
     }

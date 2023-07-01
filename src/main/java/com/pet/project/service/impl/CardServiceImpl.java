@@ -7,6 +7,7 @@ import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.CardRepository;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class CardServiceImpl implements CardService {
     public Card create(Card card) {
         try {
             return cardRepository.save(card);
-        } catch (IllegalArgumentException exception) {
+        } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Card cannot be 'null'");
         }
     }

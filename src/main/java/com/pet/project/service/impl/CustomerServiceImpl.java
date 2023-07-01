@@ -5,6 +5,7 @@ import com.pet.project.model.entity.Customer;
 import com.pet.project.repository.CustomerRepository;
 import com.pet.project.service.CustomerService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer create(Customer customer) {
         try {
             return customerRepository.save(customer);
-        } catch (IllegalArgumentException exception) {
+        } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Customer cannot be 'null'");
         }
     }
@@ -51,7 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByEmail(String email) {
         if (email != null) {
-            return customerRepository.findCustomerByEmail(email);
+            return customerRepository.findCustomerByEmail(email).orElseThrow(() ->
+                    new NoSuchElementException("Customer with email " + email + " not found"));
         }
         throw new NullEntityReferenceException("Email cannot be 'null'");
     }

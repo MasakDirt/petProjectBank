@@ -6,6 +6,7 @@ import com.pet.project.repository.TransactionRepository;
 import com.pet.project.service.AccountService;
 import com.pet.project.service.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,7 +39,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
             return transactionRepository.save(transaction);
-        } catch (IllegalArgumentException exception) {
+        } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Transaction cannot be 'null'");
         }
     }
