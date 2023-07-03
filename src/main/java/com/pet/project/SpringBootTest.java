@@ -72,9 +72,6 @@ public class SpringBootTest implements CommandLineRunner {
 
         userAdmin.setCard(cards);
 
-        firstCard.setOwner(userAdmin);
-        secondCard.setOwner(userAdmin);
-
         saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, transaction1, transaction2, transaction3, transaction4);
     }
 
@@ -86,25 +83,22 @@ public class SpringBootTest implements CommandLineRunner {
         Card secondCard = createCard(4000, user);
         Account accountSecondCard = secondCard.getAccount();
 
-        Transaction transaction1 = createTransaction(firstCard);
-        Transaction transaction2 = createTransaction(secondCard);
-        Transaction transaction3 = createTransaction(secondCard);
+        Transaction transaction5 = createTransaction(secondCard);
+        Transaction transaction6 = createTransaction(secondCard);
+        Transaction transaction7 = createTransaction(firstCard);
 
-        accountFirstCard.setTransactions(List.of(transaction1, transaction2));
-        accountSecondCard.setTransactions(List.of(transaction3));
+        accountFirstCard.setTransactions(List.of(transaction5, transaction6));
+        accountSecondCard.setTransactions(List.of(transaction7));
 
-        transaction1.setAccount(accountFirstCard);
-        transaction2.setAccount(accountFirstCard);
-        transaction3.setAccount(accountSecondCard);
+        transaction5.setAccount(accountFirstCard);
+        transaction6.setAccount(accountFirstCard);
+        transaction7.setAccount(accountSecondCard);
 
         List<Card> cards = List.of(firstCard, secondCard);
 
         user.setCard(cards);
 
-        firstCard.setOwner(user);
-        secondCard.setOwner(user);
-
-        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 1000, transaction1, transaction2);
+        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, transaction5, transaction6);
     }
 
     private void creatingThirdUser(Role role) {
@@ -113,23 +107,21 @@ public class SpringBootTest implements CommandLineRunner {
         Card card = createCard(10000, user);
         Account account = card.getAccount();
 
-        Transaction transaction1 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
-        Transaction transaction2 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 3));
-        Transaction transaction3 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
+        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
+        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 3));
+        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
 
-        account.setTransactions(List.of(transaction1, transaction2, transaction3));
+        account.setTransactions(List.of(transaction8, transaction9, transaction10));
 
-        transaction1.setAccount(account);
-        transaction2.setAccount(account);
-        transaction3.setAccount(account);
+        transaction8.setAccount(account);
+        transaction9.setAccount(account);
+        transaction10.setAccount(account);
 
         List<Card> cards = List.of(card);
 
         user.setCard(cards);
 
-        card.setOwner(user);
-
-        saveAllInDb(user, cards, List.of(account), 2000, transaction1, transaction2, transaction3);
+        saveAllInDb(user, cards, List.of(account), 1000, transaction8, transaction9, transaction10);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
@@ -154,7 +146,7 @@ public class SpringBootTest implements CommandLineRunner {
 
     private Transaction createTransaction(Card card) {
         Transaction transaction = new Transaction();
-        transaction.setRecipientCard(card);
+        transaction.setRecipientCard(card.getNumber());
         return transaction;
     }
 
@@ -163,17 +155,20 @@ public class SpringBootTest implements CommandLineRunner {
         log.info(customer.getName() + " was saved in db");
         for (Card card : cards) {
             cardService.create(card);
+            log.info("Card with number: " + card.getNumber() + " for " + card.getOwner().getName() + " is saved.");
         }
-        log.info("Card`s was saved in db");
+
 
         for (Account account : accounts) {
             accountService.create(account);
+            log.info("Account to the card " + account.getCard().getNumber() + " is saved.");
         }
-        log.info("Account`s was saved in db");
+
 
         for (Transaction transaction : transactions) {
             transactionService.create(transaction, sum);
+            log.info("Transaction to the card: " + transaction.getRecipientCard() + " is saved.");
         }
-        log.info("Transactions was saved in db");
+        
     }
 }

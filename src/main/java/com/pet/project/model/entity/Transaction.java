@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Table
 @Entity
@@ -25,9 +26,8 @@ public class Transaction {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balanceAfter;
 
-    @ManyToOne
     @JoinColumn(name = "recipient_card_id")
-    private Card recipientCard;
+    private String recipientCard;
 
     public Transaction() {
         doneAt = LocalDateTime.now();
@@ -49,7 +49,7 @@ public class Transaction {
         return balanceAfter;
     }
 
-    public Card getRecipientCard() {
+    public String getRecipientCard() {
         return recipientCard;
     }
 
@@ -69,8 +69,22 @@ public class Transaction {
         this.balanceAfter = balanceAfter;
     }
 
-    public void setRecipientCard(Card recipientCard) {
+    public void setRecipientCard(String recipientCard) {
         this.recipientCard = recipientCard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return id == that.id && Objects.equals(doneAt.toLocalDate(), that.doneAt.toLocalDate())
+                && Objects.equals(doneAt.getHour(), that.doneAt.getHour()) && Objects.equals(account, that.account);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, doneAt, account);
     }
 
     @Override
@@ -78,6 +92,7 @@ public class Transaction {
         return "Transaction{" +
                 "id=" + id +
                 ", createdAt=" + doneAt +
+                ", account=" + account +
                 '}';
     }
 }

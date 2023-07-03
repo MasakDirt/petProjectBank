@@ -5,7 +5,7 @@ import com.pet.project.model.entity.Transaction;
 import java.util.List;
 
 public interface TransactionService {
-    Transaction create(Transaction transaction, int sum);
+    Transaction create(Transaction transaction, double sum);
     void delete(long id);
     Transaction update(Transaction transaction);
     Transaction readById(long id);

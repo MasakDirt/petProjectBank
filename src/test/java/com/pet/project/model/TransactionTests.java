@@ -1,5 +1,6 @@
 package com.pet.project.model;
 
+import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,10 @@ public class TransactionTests {
 
     @BeforeAll
     static void setUp(){
+        Card card = new Card();
         validTransaction = new Transaction();
         validTransaction.setId(1);
+        validTransaction.setRecipientCard(card.getNumber());
     }
 
     @Test

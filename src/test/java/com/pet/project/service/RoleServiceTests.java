@@ -44,8 +44,12 @@ public class RoleServiceTests {
 
     @Test
     public void checkGetAll() {
-        assertEquals(roles, roleService.getAll(),
-                "Roles and roleService.getAll() must be equal");
+        assertAll(
+                () -> assertTrue(roleService.getAll().size() > 0,
+                        "There must be more than 0 roles."),
+                () ->  assertEquals(roles, roleService.getAll(),
+                        "Roles and roleService.getAll() must be equal")
+        );
     }
 
     @Test
@@ -112,7 +116,7 @@ public class RoleServiceTests {
                         "There should be EntityNotFoundException because in DB we haven`t role with this id!"),
 
                 () -> assertThrows(NullPointerException.class, () -> roleService.update(new Role()),
-                        "There should be NoSuchElementException because in DB we haven`t this role!"),
+                        "There should be NullPointerException because we need that role name will be not a null!"),
 
                 () -> assertThrows(NullEntityReferenceException.class, () -> roleService.update(null),
                         "There should be NullEntityReferenceException because we don`t need null in update method.")

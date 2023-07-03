@@ -1,45 +1,49 @@
 package com.pet.project.service.impl;
 
+import com.pet.project.exception.InsufficientFundsException;
+import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
+import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.TransactionRepository;
 import com.pet.project.service.AccountService;
+import com.pet.project.service.CardService;
 import com.pet.project.service.TransactionService;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    TransactionRepository transactionRepository;
-    AccountService accountService;
+    private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
+    private final CardService cardService;
+
 
     @Override
-    public Transaction create(Transaction transaction, int sum) {
+    public Transaction create(Transaction transaction, double sum) {
+        if (sum < 0.1) {
+            throw new InvalidAmountException("Sum must be greater than 0.1");
+        }
         try {
+            Card recipientCard = cardService.readByNumber(transaction.getRecipientCard());
 
-            transaction.setBalanceAfter(new BigDecimal(
-                    transaction.getAccount().getBalance().subtract(BigInteger.valueOf(sum)))
-            );
+            if (recipientCard.getAccount().getBalance().doubleValue() < sum) {
+                throw new InsufficientFundsException("There are not enough funds on your card " + recipientCard.getNumber() + " for the transaction");
+            }
 
-            transaction.getAccount().setBalance(transaction.getBalanceAfter());
-
-            transaction.getRecipientCard().getAccount().setBalance(new BigDecimal(
-                    transaction.getRecipientCard().getAccount().getBalance().add(BigInteger.valueOf(sum)))
-            );
+            addedAndSubtractBalances(transaction, recipientCard, sum);
 
             accountService.update(transaction.getAccount());
-            accountService.update(transaction.getRecipientCard().getAccount());
-
+            accountService.update(recipientCard.getAccount());
 
             return transactionRepository.save(transaction);
-        } catch (InvalidDataAccessApiUsageException exception) {
+        } catch (NullPointerException nullPointerException) {
             throw new NullEntityReferenceException("Transaction cannot be 'null'");
         }
     }
@@ -62,11 +66,23 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction readById(long id) {
         return transactionRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Transaction with id " + id + " not found"));
+                new EntityNotFoundException("Transaction with id " + id + " not found"));
     }
 
     @Override
     public List<Transaction> getAll() {
         return transactionRepository.findAll();
+    }
+
+    private void addedAndSubtractBalances(Transaction transaction, Card recipientCard, double sum) {
+        transaction.setBalanceAfter(new BigDecimal(
+                transaction.getAccount().getBalance().subtract(BigInteger.valueOf((long) sum)))
+        );
+
+        transaction.getAccount().setBalance(transaction.getBalanceAfter());
+
+        recipientCard.getAccount().setBalance(new BigDecimal(
+                recipientCard.getAccount().getBalance().add(BigInteger.valueOf((long) sum)))
+        );
     }
 }
