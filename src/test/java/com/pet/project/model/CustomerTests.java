@@ -1,5 +1,7 @@
 package com.pet.project.model;
 
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.Customer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -17,11 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class CustomerTests {
     private static Customer validCustomer;
+    private static final List<Card> MY_CARDS = List.of(new Card());
 
     @BeforeAll
     static void init() {
         validCustomer = new Customer();
-        validCustomer.setCard(new Card());
+        validCustomer.setCard(MY_CARDS);
         validCustomer.setEmail("customer@mail.co");
         validCustomer.setFirstName("Valid");
         validCustomer.setLastName("Valid");
@@ -43,7 +47,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName(input);
         wrongCustomer.setLastName("Valid");
         wrongCustomer.setId(2);
-        wrongCustomer.setCard(new Card());
+        wrongCustomer.setCard(MY_CARDS);
         wrongCustomer.setEmail("email@mail.com");
         wrongCustomer.setPassword("1234");
 
@@ -70,7 +74,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName("Bob");
         wrongCustomer.setLastName("Marlin");
         wrongCustomer.setId(3);
-        wrongCustomer.setCard(new Card());
+        wrongCustomer.setCard(MY_CARDS);
         wrongCustomer.setEmail(input);
         wrongCustomer.setPassword("3457");
 
@@ -96,7 +100,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName("Nick");
         wrongCustomer.setLastName("Green");
         wrongCustomer.setId(4);
-        wrongCustomer.setCard(new Card());
+        wrongCustomer.setCard(MY_CARDS);
         wrongCustomer.setEmail("email@mail.com");
         wrongCustomer.setPassword(input);
 

@@ -1,26 +1,27 @@
 package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.Customer;
+import com.pet.project.model.entity.Customer;
 import com.pet.project.repository.CustomerRepository;
 import com.pet.project.service.CustomerService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-    CustomerRepository customerRepository;
+   private final CustomerRepository customerRepository;
 
     @Override
     public Customer create(Customer customer) {
         try {
             return customerRepository.save(customer);
-        } catch (IllegalArgumentException exception) {
+        } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Customer cannot be 'null'");
         }
     }
@@ -28,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer readById(long id) {
        return  customerRepository.findById(id).orElseThrow(() ->
-               new NoSuchElementException("Customer with id " + id + " not found"));
+               new EntityNotFoundException("Customer with id " + id + " not found"));
     }
 
     @Override
@@ -51,7 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByEmail(String email) {
         if (email != null) {
-            return customerRepository.findCustomerByEmail(email);
+            return customerRepository.findCustomerByEmail(email).orElseThrow(() ->
+                    new EntityNotFoundException("Customer with email " + email + " not found"));
         }
         throw new NullEntityReferenceException("Email cannot be 'null'");
     }

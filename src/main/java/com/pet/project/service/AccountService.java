@@ -1,13 +1,17 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Account;
-import com.pet.project.model.TransactionHistory;
+import com.pet.project.model.entity.Account;
+
+import java.util.List;
 
 public interface AccountService {
     Account create(Account account);
-    void delete(long id);
+
+    void replenishBalance(long id, double sum);
+
     Account update(Account account);
+
     Account readById(long id);
-    Account readByCard(long cardId);
-    TransactionHistory getHistory(Account account);
+
+    List<Account> getAll();
 }
