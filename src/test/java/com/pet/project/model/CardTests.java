@@ -29,4 +29,14 @@ public class CardTests {
         Set<ConstraintViolation<Card>> violations = getViolations(validCard);
         assertEquals(0, violations.size());
     }
+
+    @Test
+    public void checkNullOwner(){
+        Card card = new Card();
+        card.setId(2);
+        card.setOwner(null);
+
+        Set<ConstraintViolation<Card>> violations = getViolations(card);
+        assertEquals(1, violations.size());
+    }
 }
