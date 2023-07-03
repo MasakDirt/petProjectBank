@@ -1,6 +1,7 @@
 package com.pet.project.model.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Random;
 
@@ -19,6 +20,7 @@ public class Card {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private Customer owner;
@@ -73,7 +75,7 @@ public class Card {
         return "Card{" +
                 "id=" + id +
                 ", number='" + number + '\'' +
-                ", cardAccount=" + account +
+                ", card balance=" + account.getBalance() +
                 ", owner=" + owner +
                 '}';
     }

@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -48,22 +48,25 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card readById(long id) {
         return cardRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Card with id " + id + " not found"));
+                new EntityNotFoundException("Card with id " + id + " not found"));
     }
 
     @Override
     public Card readByNumber(String number) {
         if (number != null) {
             return cardRepository.findCardByNumber(number).orElseThrow(() ->
-                    new NoSuchElementException("Card with number " + number + " not found"));
+                    new EntityNotFoundException("Card with number " + number + " not found"));
         }
         throw new NullEntityReferenceException("Number cannot be 'null'");
     }
 
     @Override
     public Card readByOwner(Customer owner, long cardId) {
-        return cardRepository.findCardByOwnerAndId(owner, cardId).orElseThrow(() ->
-                new NoSuchElementException(owner.getFirstName() + "'s " + owner.getLastName() + " card with id: " + cardId + " not found"));
+        if (owner != null){
+            return cardRepository.findCardByOwnerAndId(owner, cardId).orElseThrow(() ->
+                    new EntityNotFoundException(owner.getFirstName() + "'s " + owner.getLastName() + " card with id: " + cardId + " not found"));
+        }
+        throw new NullEntityReferenceException("Owner cannot be 'null'");
     }
 
     @Override
