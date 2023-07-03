@@ -1,34 +1,26 @@
-package com.pet.project.model;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+package com.pet.project.model.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Random;
 
 @Table(name = "card")
 @Entity
 public class Card {
+
     @Id
-    @GeneratedValue(generator = "sequence-generator")
-    @GenericGenerator(
-            name = "sequence-generator",
-            strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-            parameters = {
-                    @Parameter(name = "sequence_name", value = "card_sequence"),
-                    @Parameter(name = "initial_value", value = "1"),
-                    @Parameter(name = "increment_size", value = "1")
-            }
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
     private String number;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id")
-    private Account cardAccount;
+    private Account account;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private Customer owner;
@@ -45,8 +37,8 @@ public class Card {
         return number;
     }
 
-    public Account getCardAccount() {
-        return cardAccount;
+    public Account getAccount() {
+        return account;
     }
 
     public Customer getOwner() {
@@ -57,8 +49,8 @@ public class Card {
         this.id = id;
     }
 
-    public void setCardAccount(Account cardAccount) {
-        this.cardAccount = cardAccount;
+    public void setAccount(Account cardAccount) {
+        this.account = cardAccount;
     }
 
     public void setOwner(Customer owner) {
@@ -66,11 +58,24 @@ public class Card {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return id == card.id && Objects.equals(number, card.number) && Objects.equals(owner, card.owner);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number, owner);
+    }
+
+    @Override
     public String toString() {
         return "Card{" +
                 "id=" + id +
                 ", number='" + number + '\'' +
-                ", cardAccount=" + cardAccount +
+                ", card balance=" + account.getBalance() +
                 ", owner=" + owner +
                 '}';
     }

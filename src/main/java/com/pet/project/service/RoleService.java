@@ -1,6 +1,6 @@
 package com.pet.project.service;
 
-import com.pet.project.model.Role;
+import com.pet.project.model.entity.Role;
 
 import java.util.List;
 
