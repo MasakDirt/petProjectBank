@@ -1,6 +1,8 @@
 package com.pet.project.model.entity;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,6 +12,8 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Table(name = "customer")
 @Entity
 @NoArgsConstructor
@@ -48,61 +52,6 @@ public class Customer {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Card> myCards;
 
-    public long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public List<Card> getCards() {
-        return myCards;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setCard(List<Card> cards) {
-        this.myCards = cards;
-    }
 
     @Override
     public boolean equals(Object o) {

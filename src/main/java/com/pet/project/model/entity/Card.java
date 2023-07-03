@@ -1,10 +1,14 @@
 package com.pet.project.model.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Random;
-
+@Getter
+@Setter
 @Table(name = "card")
 @Entity
 public class Card {
@@ -27,34 +31,6 @@ public class Card {
 
     public Card() {
         createNumberCard();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public Customer getOwner() {
-        return owner;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setAccount(Account cardAccount) {
-        this.account = cardAccount;
-    }
-
-    public void setOwner(Customer owner) {
-        this.owner = owner;
     }
 
     @Override

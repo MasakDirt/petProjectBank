@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -83,7 +82,7 @@ public class AccountServiceTests {
     @Test
     public void checkReplenishBalanceAccount() {
         Account expected = accountService.readById(3L);
-        BigInteger balanceBefore = expected.getBalance();
+        BigDecimal balanceBefore = expected.getBalance();
 
         double sum = 200000;
         accountService.replenishBalance(3L, sum);
@@ -92,7 +91,7 @@ public class AccountServiceTests {
 
         assertThat(actual.getBalance()).isNotEqualTo(balanceBefore);
         assertThat(actual.getBalance())
-                .isEqualTo(balanceBefore.add(BigInteger.valueOf((long) sum)));
+                .isEqualTo(balanceBefore.add(new BigDecimal(sum)));
         assertThat(actual.getCard()).isEqualTo(expected.getCard());
 
     }

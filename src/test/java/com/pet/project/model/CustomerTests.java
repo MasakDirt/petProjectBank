@@ -25,7 +25,7 @@ public class CustomerTests {
     @BeforeAll
     static void init() {
         validCustomer = new Customer();
-        validCustomer.setCard(MY_CARDS);
+        validCustomer.setMyCards(MY_CARDS);
         validCustomer.setEmail("customer@mail.co");
         validCustomer.setFirstName("Valid");
         validCustomer.setLastName("Valid");
@@ -47,7 +47,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName(input);
         wrongCustomer.setLastName("Valid");
         wrongCustomer.setId(2);
-        wrongCustomer.setCard(MY_CARDS);
+        wrongCustomer.setMyCards(MY_CARDS);
         wrongCustomer.setEmail("email@mail.com");
         wrongCustomer.setPassword("1234");
 
@@ -74,7 +74,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName("Bob");
         wrongCustomer.setLastName("Marlin");
         wrongCustomer.setId(3);
-        wrongCustomer.setCard(MY_CARDS);
+        wrongCustomer.setMyCards(MY_CARDS);
         wrongCustomer.setEmail(input);
         wrongCustomer.setPassword("3457");
 
@@ -100,7 +100,7 @@ public class CustomerTests {
         wrongCustomer.setFirstName("Nick");
         wrongCustomer.setLastName("Green");
         wrongCustomer.setId(4);
-        wrongCustomer.setCard(MY_CARDS);
+        wrongCustomer.setMyCards(MY_CARDS);
         wrongCustomer.setEmail("email@mail.com");
         wrongCustomer.setPassword(input);
 

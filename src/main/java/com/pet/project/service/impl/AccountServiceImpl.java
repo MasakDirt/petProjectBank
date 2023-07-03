@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class AccountServiceImpl implements AccountService {
             throw new InvalidAmountException("Sum must be greater than 0.1");
         }
         Account account = readById(id);
-        account.setBalance(new BigDecimal(
-                account.getBalance().add(BigInteger.valueOf((long) sum))
-        ));
+        account.setBalance(
+                account.getBalance().add(new BigDecimal(sum))
+        );
         update(account);
     }
 

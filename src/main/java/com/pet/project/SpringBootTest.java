@@ -27,7 +27,7 @@ public class SpringBootTest implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         log.info("Running Spring Boot Application");
         Role admin = new Role();
         admin.setName("ADMIN");
@@ -70,7 +70,7 @@ public class SpringBootTest implements CommandLineRunner {
 
         List<Card> cards = List.of(firstCard, secondCard);
 
-        userAdmin.setCard(cards);
+        userAdmin.setMyCards(cards);
 
         saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, transaction1, transaction2, transaction3, transaction4);
     }
@@ -96,7 +96,7 @@ public class SpringBootTest implements CommandLineRunner {
 
         List<Card> cards = List.of(firstCard, secondCard);
 
-        user.setCard(cards);
+        user.setMyCards(cards);
 
         saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, transaction5, transaction6);
     }
@@ -119,7 +119,7 @@ public class SpringBootTest implements CommandLineRunner {
 
         List<Card> cards = List.of(card);
 
-        user.setCard(cards);
+        user.setMyCards(cards);
 
         saveAllInDb(user, cards, List.of(account), 1000, transaction8, transaction9, transaction10);
     }

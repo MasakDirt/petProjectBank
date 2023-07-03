@@ -206,7 +206,7 @@ public class CardServiceTests {
     @Test
     public void checkGetAllByOwnerCards() {
         Customer customer = customerService.readById(2L);
-        List<Card> expected = customer.getCards();
+        List<Card> expected = customer.getMyCards();
 
         assertEquals(expected, cardService.getAllByOwner(customer),
                 "Here we must simply get from owner all his cards");

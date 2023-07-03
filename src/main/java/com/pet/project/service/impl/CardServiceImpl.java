@@ -72,7 +72,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Card> getAllByOwner(Customer owner) {
         if (owner != null) {
-            return owner.getCards();
+            return owner.getMyCards();
         }
         throw new NullEntityReferenceException("Owner cannot be 'null'!");
     }

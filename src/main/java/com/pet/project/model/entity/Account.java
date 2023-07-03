@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,39 +31,6 @@ public class Account {
 
     public Account() {
         balance = BigDecimal.ZERO;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public BigInteger getBalance() {
-        return balance.toBigInteger();
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setBalance(BigDecimal account) {
-        this.balance = account;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
     }
 
     @Override

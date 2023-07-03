@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -50,7 +49,7 @@ public class AccountTests {
     @Test
     public void checkIfDontSetAccount() {
         Account account = new Account();
-        assertEquals(BigInteger.ZERO, account.getBalance());
+        assertEquals(BigDecimal.ZERO, account.getBalance());
     }
 
     @ParameterizedTest

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -57,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction update(Transaction transaction) {
         if (transaction != null) {
-            Transaction oldTransaction = readById(transaction.getId());
+            readById(transaction.getId());
             return transactionRepository.save(transaction);
         }
         throw new NullEntityReferenceException("Transaction cannot be 'null'");
@@ -75,14 +74,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void addedAndSubtractBalances(Transaction transaction, Card recipientCard, double sum) {
-        transaction.setBalanceAfter(new BigDecimal(
-                transaction.getAccount().getBalance().subtract(BigInteger.valueOf((long) sum)))
+        transaction.setBalanceAfter(
+                transaction.getAccount().getBalance().subtract(new BigDecimal(sum))
         );
 
         transaction.getAccount().setBalance(transaction.getBalanceAfter());
 
-        recipientCard.getAccount().setBalance(new BigDecimal(
-                recipientCard.getAccount().getBalance().add(BigInteger.valueOf((long) sum)))
+        recipientCard.getAccount().setBalance(
+                recipientCard.getAccount().getBalance().add(new BigDecimal(sum))
         );
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -70,8 +70,8 @@ public class TransactionServiceTests {
 
         int sum = 100;
 
-        BigInteger recipientBalance = recipient.getAccount().getBalance();
-        BigInteger accountFromWhichCreatePaymentBalance = account.getBalance();
+        BigDecimal recipientBalance = recipient.getAccount().getBalance();
+        BigDecimal accountFromWhichCreatePaymentBalance = account.getBalance();
 
         Transaction transaction = new Transaction();
         transaction.setRecipientCard(recipient.getNumber());
@@ -81,11 +81,11 @@ public class TransactionServiceTests {
         transactionService.create(transaction, sum);
 
         assertAll(
-                () -> assertEquals(cardService.readById(recipient.getId()).getAccount().getBalance(), recipientBalance.add(BigInteger.valueOf(sum)),
+                () -> assertEquals(cardService.readById(recipient.getId()).getAccount().getBalance(), recipientBalance.add(new BigDecimal(sum)),
                         "Recipient card not added sum to it`s balance, please check why it was"),
 
                 () -> assertEquals(accountService.readById(account.getId()).getBalance(),
-                        accountFromWhichCreatePaymentBalance.subtract(BigInteger.valueOf(sum)),
+                        accountFromWhichCreatePaymentBalance.subtract(new BigDecimal(sum)),
                         "Account from which transaction was create not subtract sum, please check why it was"),
 
                 () -> assertTrue(transactions.size() < transactionService.getAll().size(),
