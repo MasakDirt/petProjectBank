@@ -1,5 +1,6 @@
 package com.pet.project.service.impl;
 
+import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Account;
 import com.pet.project.repository.AccountRepository;
@@ -9,13 +10,15 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
-   private final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public Account create(Account account) {
@@ -24,6 +27,18 @@ public class AccountServiceImpl implements AccountService {
         } catch (InvalidDataAccessApiUsageException invalidDataAccessApiUsageException) {
             throw new NullEntityReferenceException("Account cannot be 'null'");
         }
+    }
+
+    @Override
+    public void replenishBalance(long id, double sum) {
+        if (sum < 0.1) {
+            throw new InvalidAmountException("Sum must be greater than 0.1");
+        }
+        Account account = readById(id);
+        account.setBalance(new BigDecimal(
+                account.getBalance().add(BigInteger.valueOf((long) sum))
+        ));
+        update(account);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.pet.project.service;
 
+import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Transaction;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -76,6 +78,34 @@ public class AccountServiceTests {
     @Test
     public void checkNotValidAccountCreating() {
         assertThrows(NullEntityReferenceException.class, () -> accountService.create(null));
+    }
+
+    @Test
+    public void checkReplenishBalanceAccount() {
+        Account expected = accountService.readById(3L);
+        BigInteger balanceBefore = expected.getBalance();
+
+        double sum = 200000;
+        accountService.replenishBalance(3L, sum);
+
+        Account actual = accountService.readById(3L);
+
+        assertThat(actual.getBalance()).isNotEqualTo(balanceBefore);
+        assertThat(actual.getBalance())
+                .isEqualTo(balanceBefore.add(BigInteger.valueOf((long) sum)));
+        assertThat(actual.getCard()).isEqualTo(expected.getCard());
+
+    }
+
+    @Test
+    public void checkInvalidReplenishBalanceAccount() {
+        assertAll(
+                () -> assertThrows(InvalidAmountException.class, () -> accountService.replenishBalance(4L, -12),
+                        "Sum must be greater than 0.1, so we have InvalidAmountException"),
+
+                () -> assertThrows(EntityNotFoundException.class, () -> accountService.replenishBalance(4000000L, 12),
+                        "There might be EntityNotFoundException because we have not account with id 4000000")
+        );
     }
 
     @Test
