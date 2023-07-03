@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CardRepositoryTests {
     private final CustomerRepository customerRepository;
     private final CardRepository cardRepository;
-    private static int idCounter = 6;
+    private static int idCounter = 9;
 
     @Autowired
     public CardRepositoryTests(CustomerRepository customerRepository, CardRepository cardRepository) {
