@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //In Repository layer I check only my methods!
@@ -24,11 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CardRepositoryTests {
     private final CustomerRepository customerRepository;
     private final CardRepository cardRepository;
+    private static int idCounter = 6;
 
     @Autowired
     public CardRepositoryTests(CustomerRepository customerRepository, CardRepository cardRepository) {
         this.customerRepository = customerRepository;
         this.cardRepository = cardRepository;
+    }
+    @Test
+    void injectedComponentsAreNotNull() {
+        assertThat(customerRepository).isNotNull();
+        assertThat(cardRepository).isNotNull();
     }
 
     @Test
@@ -64,7 +71,7 @@ public class CardRepositoryTests {
         account.setId(20L);
 
         Card card = new Card();
-        card.setId(6);
+        card.setId(idCounter++);
         card.setOwner(owner);
         card.setAccount(account);
 

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //In Repository layer I check only my methods!
@@ -19,11 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @ExtendWith(SpringExtension.class)
 public class RoleRepositoryTests {
-    private final RoleRepository roleRepository;
-
     @Autowired
-    public RoleRepositoryTests(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    private RoleRepository roleRepository;
+
+    @Test
+    void injectedComponentsAreNotNull() {
+        assertThat(roleRepository).isNotNull();
     }
 
     @Test

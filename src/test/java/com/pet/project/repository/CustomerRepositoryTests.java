@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 //In Repository layer I check only my methods!
 @ActiveProfiles("test")
 @SpringBootTest
@@ -25,6 +27,12 @@ public class CustomerRepositoryTests {
     public CustomerRepositoryTests(CustomerRepository customerRepository, RoleRepository roleRepository) {
         this.customerRepository = customerRepository;
         this.roleRepository = roleRepository;
+    }
+
+    @Test
+    void injectedComponentsAreNotNull() {
+        assertThat(customerRepository).isNotNull();
+        assertThat(roleRepository).isNotNull();
     }
 
     @Test
