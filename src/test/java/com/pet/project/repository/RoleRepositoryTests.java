@@ -31,7 +31,7 @@ public class RoleRepositoryTests {
     @Test
     public void checkFindByNameRole() {
         Role expected = new Role();
-        expected.setId(3L);
+        expected.setId(6L);
         expected.setName("Experiment");
         roleRepository.save(expected);
 

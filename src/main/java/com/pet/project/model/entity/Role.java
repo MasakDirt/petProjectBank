@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,6 +26,9 @@ public class Role implements GrantedAuthority {
     @NotBlank(message = "The 'name' cannot be empty")
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    private List<Customer> customers;
 
     @Override
     public boolean equals(Object o) {

@@ -4,7 +4,7 @@ import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Role;
 import com.pet.project.repository.RoleRepository;
 import com.pet.project.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,9 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class RoleServiceImpl implements RoleService {
-    @Autowired
-    RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public Role create(Role role) {
@@ -33,7 +33,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role update(Role role) {
-        if (role != null){
+        if (role != null) {
             readById(role.getId());
             return roleRepository.save(role);
         }
@@ -48,8 +48,11 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role readByName(String name) {
-        return roleRepository.findByName(name).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Role with name %s not found", name)));
+        if (name != null) {
+            return roleRepository.findByName(name).orElseThrow(() ->
+                    new EntityNotFoundException(String.format("Role with name %s not found", name)));
+        }
+        throw new NullEntityReferenceException("Name cannot be 'null'");
     }
 
     @Override
