@@ -45,7 +45,7 @@ public class Customer {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Card> myCards;
 
     public long getId() {
@@ -124,7 +124,6 @@ public class Customer {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", cards='" + myCards + '\'' +
                 '}';
     }
 

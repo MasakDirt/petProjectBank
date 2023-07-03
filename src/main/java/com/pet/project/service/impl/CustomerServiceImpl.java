@@ -8,9 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer readById(long id) {
        return  customerRepository.findById(id).orElseThrow(() ->
-               new NoSuchElementException("Customer with id " + id + " not found"));
+               new EntityNotFoundException("Customer with id " + id + " not found"));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer findByEmail(String email) {
         if (email != null) {
             return customerRepository.findCustomerByEmail(email).orElseThrow(() ->
-                    new NoSuchElementException("Customer with email " + email + " not found"));
+                    new EntityNotFoundException("Customer with email " + email + " not found"));
         }
         throw new NullEntityReferenceException("Email cannot be 'null'");
     }
