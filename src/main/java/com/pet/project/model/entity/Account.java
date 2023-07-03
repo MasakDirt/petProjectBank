@@ -27,7 +27,7 @@ public class Account {
     @OneToOne(mappedBy = "account")
     private Card card;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
     public Account() {
@@ -72,6 +72,7 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", balance=" + balance +
+                ", card=" + card +
                 '}';
     }
 
@@ -80,7 +81,7 @@ public class Account {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return id == account.id && balance.toBigInteger().equals(account.balance.toBigInteger()) && Objects.equals(card, account.card);
+        return id == account.id && balance.equals(account.balance) && Objects.equals(card, account.card);
     }
 
     @Override

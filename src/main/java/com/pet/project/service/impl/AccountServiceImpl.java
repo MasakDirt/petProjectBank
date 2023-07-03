@@ -5,11 +5,12 @@ import com.pet.project.model.entity.Account;
 import com.pet.project.repository.AccountRepository;
 import com.pet.project.service.AccountService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
@@ -20,21 +21,15 @@ public class AccountServiceImpl implements AccountService {
     public Account create(Account account) {
         try {
             return accountRepository.save(account);
-        } catch (IllegalArgumentException illegal) {
+        } catch (InvalidDataAccessApiUsageException invalidDataAccessApiUsageException) {
             throw new NullEntityReferenceException("Account cannot be 'null'");
         }
     }
 
     @Override
-    public void delete(long id) {
-        Account account = readById(id);
-        accountRepository.delete(account);
-    }
-
-    @Override
     public Account update(Account account) {
         if (account != null) {
-            Account oldAcc = readById(account.getId());
+            readById(account.getId());
             return accountRepository.save(account);
         }
         throw new NullEntityReferenceException("Account cannot be 'null'");
@@ -43,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account readById(long id) {
         return accountRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Account with id " + id + " not found"));
+                new EntityNotFoundException("Account with id " + id + " not found"));
     }
 
     @Override
