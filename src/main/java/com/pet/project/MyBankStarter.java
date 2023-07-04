@@ -14,7 +14,7 @@ import java.util.List;
 @SpringBootApplication
 @AllArgsConstructor
 @Slf4j
-public class SpringBootTest implements CommandLineRunner {
+public class MyBankStarter implements CommandLineRunner {
 
     private final CustomerService customerService;
     private final CardService cardService;
@@ -23,7 +23,7 @@ public class SpringBootTest implements CommandLineRunner {
     private final TransactionService transactionService;
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootTest.class, args);
+        SpringApplication.run(MyBankStarter.class, args);
     }
 
     @Override
