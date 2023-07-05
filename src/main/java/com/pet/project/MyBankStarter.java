@@ -48,7 +48,7 @@ public class MyBankStarter implements CommandLineRunner {
 
 
     private void creatingFirstUser(Role role) {
-        Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "qwQW12!@", role);
+        Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "1111", role);
 
         Card firstCard = createCard(120, userAdmin);
         Account accountFirstCard = firstCard.getAccount();
@@ -76,7 +76,7 @@ public class MyBankStarter implements CommandLineRunner {
     }
 
     private void creatingSecondUser(Role role) {
-        Customer user = createCustomer("Nick", "Miles", "nike@mail.co", "asAS34#$", role);
+        Customer user = createCustomer("Nick", "Miles", "nike@mail.co", "2222", role);
 
         Card firstCard = createCard(3000, user);
         Account accountFirstCard = firstCard.getAccount();
@@ -102,14 +102,14 @@ public class MyBankStarter implements CommandLineRunner {
     }
 
     private void creatingThirdUser(Role role) {
-        Customer user = createCustomer("Mila", "Miles", "mila@mail.co", "fgFG&*", role);
+        Customer user = createCustomer("Mila", "Miles", "mila@mail.co", "3333", role);
 
         Card card = createCard(10000, user);
         Account account = card.getAccount();
 
-        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
-        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 3));
-        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
+        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
+        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 3));
+        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
 
         account.setTransactions(List.of(transaction8, transaction9, transaction10));
 
