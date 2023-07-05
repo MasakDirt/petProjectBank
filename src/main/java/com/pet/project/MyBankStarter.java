@@ -72,7 +72,7 @@ public class MyBankStarter implements CommandLineRunner {
 
         userAdmin.setMyCards(cards);
 
-        saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, transaction1, transaction2, transaction3, transaction4);
+        saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, role, transaction1, transaction2, transaction3, transaction4);
     }
 
     private void creatingSecondUser(Role role) {
@@ -98,7 +98,7 @@ public class MyBankStarter implements CommandLineRunner {
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, transaction5, transaction6);
+        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, role, transaction5, transaction6);
     }
 
     private void creatingThirdUser(Role role) {
@@ -121,7 +121,7 @@ public class MyBankStarter implements CommandLineRunner {
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(account), 1000, transaction8, transaction9, transaction10);
+        saveAllInDb(user, cards, List.of(account), 1000, role, transaction8, transaction9, transaction10);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
@@ -150,8 +150,8 @@ public class MyBankStarter implements CommandLineRunner {
         return transaction;
     }
 
-    private void saveAllInDb(Customer customer, List<Card> cards, List<Account> accounts, int sum, Transaction... transactions) {
-        customerService.create(customer);
+    private void saveAllInDb(Customer customer, List<Card> cards, List<Account> accounts, int sum, Role role, Transaction... transactions) {
+        customerService.create(customer, role);
         log.info(customer.getName() + " was saved in db");
         for (Card card : cards) {
             cardService.create(card);
@@ -169,6 +169,6 @@ public class MyBankStarter implements CommandLineRunner {
             transactionService.create(transaction, sum);
             log.info("Transaction to the card: " + transaction.getRecipientCard() + " is saved.");
         }
-        
+
     }
 }

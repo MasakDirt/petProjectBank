@@ -2,6 +2,7 @@ package com.pet.project.service.impl;
 
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.entity.Customer;
+import com.pet.project.model.entity.Role;
 import com.pet.project.repository.CustomerRepository;
 import com.pet.project.service.CustomerService;
 import lombok.AllArgsConstructor;
@@ -22,9 +23,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Customer create(Customer customer) {
+    public Customer create(Customer customer, Role role) {
         try {
             customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+            customer.setRole(role);
             return customerRepository.save(customer);
         } catch (InvalidDataAccessApiUsageException | NullPointerException exception) {
             throw new NullEntityReferenceException("Customer cannot be 'null'");
@@ -44,10 +46,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer update(Customer customer, String newPassword) {
-        if (customer != null && newPassword != null) {
+    public Customer update(Customer customer, String oldPassword) {
+        if (customer != null && oldPassword != null) {
             Customer oldCustomer = readById(customer.getId());
-            return checkPasswords(newPassword, oldCustomer);
+            return checkPasswords(oldPassword, oldCustomer);
         }
         throw new NullEntityReferenceException("Customer or password cannot be 'null'");
     }
@@ -67,8 +69,8 @@ public class CustomerServiceImpl implements CustomerService {
         return customers.isEmpty() ? new ArrayList<>() : customers;
     }
 
-    private Customer checkPasswords(String newPassword, Customer customer) {
-        if (!passwordEncoder.matches(newPassword, customer.getPassword())) {
+    private Customer checkPasswords(String oldPassword, Customer customer) {
+        if (!passwordEncoder.matches(oldPassword, customer.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong old password");
         }
         return customerRepository.save(customer);

@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -39,7 +38,7 @@ public class Customer implements UserDetails {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Email(message = "Write a valid e-mail address")
+    @Pattern(regexp = "[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}", message = "Must be a valid e-mail address")
     @NotBlank
     @Column(name = "email", nullable = false, unique = true)
     private String email;
