@@ -14,7 +14,7 @@ import java.util.List;
 @SpringBootApplication
 @AllArgsConstructor
 @Slf4j
-public class SpringBootTest implements CommandLineRunner {
+public class MyBankStarter implements CommandLineRunner {
 
     private final CustomerService customerService;
     private final CardService cardService;
@@ -23,7 +23,7 @@ public class SpringBootTest implements CommandLineRunner {
     private final TransactionService transactionService;
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootTest.class, args);
+        SpringApplication.run(MyBankStarter.class, args);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class SpringBootTest implements CommandLineRunner {
 
 
     private void creatingFirstUser(Role role) {
-        Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "qwQW12!@", role);
+        Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "1111", role);
 
         Card firstCard = createCard(120, userAdmin);
         Account accountFirstCard = firstCard.getAccount();
@@ -72,11 +72,11 @@ public class SpringBootTest implements CommandLineRunner {
 
         userAdmin.setMyCards(cards);
 
-        saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, transaction1, transaction2, transaction3, transaction4);
+        saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, role, transaction1, transaction2, transaction3, transaction4);
     }
 
     private void creatingSecondUser(Role role) {
-        Customer user = createCustomer("Nick", "Miles", "nike@mail.co", "asAS34#$", role);
+        Customer user = createCustomer("Nick", "Miles", "nike@mail.co", "2222", role);
 
         Card firstCard = createCard(3000, user);
         Account accountFirstCard = firstCard.getAccount();
@@ -98,18 +98,18 @@ public class SpringBootTest implements CommandLineRunner {
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, transaction5, transaction6);
+        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, role, transaction5, transaction6);
     }
 
     private void creatingThirdUser(Role role) {
-        Customer user = createCustomer("Mila", "Miles", "mila@mail.co", "fgFG&*", role);
+        Customer user = createCustomer("Mila", "Miles", "mila@mail.co", "3333", role);
 
         Card card = createCard(10000, user);
         Account account = card.getAccount();
 
-        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
-        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 3));
-        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.findByEmail("nike@mail.co"), 4));
+        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
+        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 3));
+        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
 
         account.setTransactions(List.of(transaction8, transaction9, transaction10));
 
@@ -121,7 +121,7 @@ public class SpringBootTest implements CommandLineRunner {
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(account), 1000, transaction8, transaction9, transaction10);
+        saveAllInDb(user, cards, List.of(account), 1000, role, transaction8, transaction9, transaction10);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
@@ -150,8 +150,8 @@ public class SpringBootTest implements CommandLineRunner {
         return transaction;
     }
 
-    private void saveAllInDb(Customer customer, List<Card> cards, List<Account> accounts, int sum, Transaction... transactions) {
-        customerService.create(customer);
+    private void saveAllInDb(Customer customer, List<Card> cards, List<Account> accounts, int sum, Role role, Transaction... transactions) {
+        customerService.create(customer, role);
         log.info(customer.getName() + " was saved in db");
         for (Card card : cards) {
             cardService.create(card);
@@ -169,6 +169,6 @@ public class SpringBootTest implements CommandLineRunner {
             transactionService.create(transaction, sum);
             log.info("Transaction to the card: " + transaction.getRecipientCard() + " is saved.");
         }
-        
+
     }
 }
