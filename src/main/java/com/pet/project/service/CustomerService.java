@@ -9,10 +9,9 @@ public interface CustomerService {
 
     void delete(long id);
 
-    Customer update(Customer customer);
-
+    Customer update(Customer customer, String newPassword);
     Customer readById(long id);
-    Customer findByEmail(String email);
+    Customer loadUserByUsername(String email);
 
     List<Customer> getAll();
 }

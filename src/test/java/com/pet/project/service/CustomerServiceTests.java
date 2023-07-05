@@ -13,7 +13,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -80,16 +79,16 @@ public class CustomerServiceTests {
     public void checkNotValidUserCreate() {
         assertAll(
                 () -> assertThrows(NullEntityReferenceException.class, () -> customerService.create(null),
-                        "There need to be NullEntityReferenceException  because we are pass null."),
+                        "There need to be NullEntityReferenceException because we are pass null."),
 
-                () -> assertThrows(ConstraintViolationException.class, () -> customerService.create(new Customer()),
+                () -> assertThrows(IllegalArgumentException.class, () -> customerService.create(new Customer()),
                         "There need to be ConstraintViolationException because we are pass object without tabular values.")
         );
     }
 
     @Test
     public void checkReadByIdUser() {
-        customerService.create(validCustomer);
+        validCustomer = customerService.create(validCustomer);
         Customer actual = customerService.readById(validCustomer.getId());
 
         assertEquals(validCustomer, actual, "They need to be equals, please check there`s id.");
@@ -117,10 +116,9 @@ public class CustomerServiceTests {
 
     @Test
     public void checkUpdateUser() {
-        Customer actual = validCustomer;
-        actual.setId(1L);
-
-        customerService.update(actual);
+        Customer actual = customerService.readById(1L);
+        actual.setEmail("newEmail@mail.co");
+        customerService.update(actual, "1111");
 
         assertAll(
                 () -> assertEquals(customerService.readById(actual.getId()), actual,
@@ -134,10 +132,10 @@ public class CustomerServiceTests {
     @Test
     public void checkNotValidUpdate() {
         assertAll(
-                () -> assertThrows(EntityNotFoundException.class, () -> customerService.update(new Customer()),
-                        "There we will get EntityNotFoundException because we have not customer with id 0."),
+                () -> assertThrows(EntityNotFoundException.class, () -> customerService.update(new Customer(),""),
+                        "There we will get EntityNotFoundException because we have not customer with id 0 and theirs password don`t equals."),
 
-                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.update(null),
+                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.update(null,null),
                         "There we will get NullEntityReferenceException because of null parameter.")
         );
     }
@@ -145,7 +143,7 @@ public class CustomerServiceTests {
     @Test
     public void checkFindByEmailUser() {
         customerService.create(validCustomer);
-        Customer actual = customerService.findByEmail(validCustomer.getEmail());
+        Customer actual = customerService.loadUserByUsername(validCustomer.getEmail());
 
         assertThat(validCustomer.getEmail()).isEqualTo(actual.getEmail());
         assertThat(validCustomer.getName()).isEqualTo(actual.getName());
@@ -155,10 +153,10 @@ public class CustomerServiceTests {
     @Test
     public void checkNotValidFindByEmail() {
         assertAll(
-                () -> assertThrows(EntityNotFoundException.class, () -> customerService.findByEmail("fakeEmailForTests@mail.co"),
+                () -> assertThrows(EntityNotFoundException.class, () -> customerService.loadUserByUsername("fakeEmailForTests@mail.co"),
                         "There we will get EntityNotFoundException because we have not customer in DB with that email"),
 
-                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.findByEmail(null),
+                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.loadUserByUsername(null),
                         "There we will get NullEntityReferenceException because of null parameter")
         );
     }
