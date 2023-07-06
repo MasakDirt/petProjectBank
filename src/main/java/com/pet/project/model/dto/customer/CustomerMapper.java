@@ -6,7 +6,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
-    Customer customerCreateToCustomer(CustomerCreateRequest customerCreateRequest);
+    Customer createCustomerToCustomer(CustomerCreateRequest customerCreateRequest);
     @Mapping(target = "role", expression = "java(customer.getRole().getName())")
     CustomerResponse customerToCustomerResponse(Customer customer);
 

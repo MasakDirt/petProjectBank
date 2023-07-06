@@ -14,6 +14,10 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerUpdateRequest {
+    
+    @JsonProperty
+    private long id;
+
     @JsonProperty("first_name")
     @Pattern(regexp = "[A-Z][a-z]+",
             message = "Must start with a capital letter followed by one or more lowercase letters")
