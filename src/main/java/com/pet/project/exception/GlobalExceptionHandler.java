@@ -41,16 +41,6 @@ public class GlobalExceptionHandler {
         return getErrorResponse(request, HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<ErrorResponse> handleConstraintViolationException(HttpServletRequest request, ConstraintViolationException ex) {
-//        return getErrorResponse(request, HttpStatus.BAD_REQUEST, ex.getMessage());
-//    }
-//
-//    @ExceptionHandler(InsufficientFundsException.class)
-//    public ResponseEntity<ErrorResponse> handleInsufficientFundsException(HttpServletRequest request, InsufficientFundsException ex) {
-//        return getErrorResponse(request, HttpStatus.BAD_REQUEST, ex.getMessage());
-//    }
-
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(HttpServletRequest request, BadCredentialsException ex) {
         return getErrorResponse(request, HttpStatus.UNAUTHORIZED, ex.getMessage());
