@@ -1,5 +1,6 @@
 package com.pet.project;
 
+import com.pet.project.model.dto.transaction.TransactionCreateRequest;
 import com.pet.project.model.entity.*;
 import com.pet.project.service.*;
 import lombok.AllArgsConstructor;
@@ -62,10 +63,10 @@ public class MyBankStarter implements CommandLineRunner {
 
         userAdmin.setMyCards(cards);
 
-        Transaction transaction1 = createTransaction(secondCard, accountFirst, 500);
-        Transaction transaction2 = createTransaction(secondCard, accountFirst, 789.34);
-        Transaction transaction3 = createTransaction(firstCard, accountSecond, 1250.890);
-        Transaction transaction4 = createTransaction(firstCard, accountSecond, 900);
+        Transaction transaction1 = createTransaction(secondCard.getNumber(), accountFirst, 500);
+        Transaction transaction2 = createTransaction(secondCard.getNumber(), accountFirst, 789.34);
+        Transaction transaction3 = createTransaction(firstCard.getNumber(), accountSecond, 1250.890);
+        Transaction transaction4 = createTransaction(firstCard.getNumber(), accountSecond, 900);
 
         accountFirst.setTransactions(List.of(transaction1, transaction2));
         accountSecond.setTransactions(List.of(transaction3, transaction4));
@@ -89,9 +90,9 @@ public class MyBankStarter implements CommandLineRunner {
 
         user.setMyCards(cards);
 
-        Transaction transaction5 = createTransaction(secondCard, accountFirst, 20);
-        Transaction transaction6 = createTransaction(secondCard, accountFirst, 130);
-        Transaction transaction7 = createTransaction(firstCard, accountSecond, 333);
+        Transaction transaction5 = createTransaction(secondCard.getNumber(), accountFirst, 20);
+        Transaction transaction6 = createTransaction(secondCard.getNumber(), accountFirst, 130);
+        Transaction transaction7 = createTransaction(firstCard.getNumber(), accountSecond, 333);
 
         accountSecond.setTransactions(List.of(transaction7));
         accountFirst.setTransactions(List.of(transaction5, transaction6));
@@ -113,9 +114,9 @@ public class MyBankStarter implements CommandLineRunner {
 
         Card recepientCard = cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4);
 
-        Transaction transaction8 = createTransaction(recepientCard, account, 1234);
-        Transaction transaction9 = createTransaction(recepientCard, account, 1456);
-        Transaction transaction10 = createTransaction(recepientCard, account, 6789);
+        Transaction transaction8 = createTransaction(recepientCard.getNumber(), account, 1234);
+        Transaction transaction9 = createTransaction(recepientCard.getNumber(), account, 1456);
+        Transaction transaction10 = createTransaction(recepientCard.getNumber(), account, 6789);
 
         account.setTransactions(List.of(transaction8, transaction9, transaction10));
         accountService.update(account);
@@ -139,12 +140,10 @@ public class MyBankStarter implements CommandLineRunner {
         return card;
     }
 
-    private Transaction createTransaction(Card recepientCard, Account account, double transferAmount) {
-        Transaction transaction = new Transaction();
-        transaction.setAccount(account);
-        transaction.setRecipientCard(recepientCard.getNumber());
+    private Transaction createTransaction(String recipientCard, Account account, double transferAmount) {
+        TransactionCreateRequest request = new TransactionCreateRequest(recipientCard, transferAmount);
 
-        var transac = transactionService.create(transaction, transferAmount);
+        var transac = transactionService.create(request, account.getId());
         log.info("Transaction === for card number {} === was created.", account.getCard().getNumber());
         return transac;
     }
