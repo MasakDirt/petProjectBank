@@ -65,7 +65,8 @@ public class CardController {
 
     @PutMapping("{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
-    CardResponse updateBalance(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, @RequestBody CardBalanceUpdateRequest request, Authentication authentication) {
+    CardResponse updateBalance(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id,
+                               @RequestBody CardBalanceUpdateRequest request, Authentication authentication) {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readById(id);
         accountService.replenishBalance(response.getAccount().getId(), request.getSum());
