@@ -1,4 +1,4 @@
-package com.pet.project.utils;
+package com.pet.project.component;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
