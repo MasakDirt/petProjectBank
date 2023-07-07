@@ -9,33 +9,26 @@ import org.springframework.stereotype.Service;
 public class AuthorizationService {
     private final CustomerService customerService;
 
-    public boolean checkIfUsersSame(long id) {
-        return customerService.readById(id).getEmail().equals(getPrincipal());
+    public boolean isUserAdminOrValidUserAndIsCardOwner(String username, long ownerId, long cardId) {
+        return isAdmin(username) || (isUsersIdEquals(username, ownerId) && isCardOwner(username, cardId));
     }
 
-    public boolean isUserAdminOrValidUserAndIsCardOwner(long ownerId, long cardId) {
-        return isUserAdminOrIsUsersSame(ownerId) && isCardOwner(ownerId, cardId);
+    public boolean isUserAdminOrIsUsersSame(String username, long ownerId) {
+        return isAdmin(username) || isUsersIdEquals(username, ownerId);
     }
 
-    public boolean isUserAdminOrIsUsersSame(long id) {
-        return isAdmin(id) || checkIfUsersSame(id);
+    public boolean isAdmin(String username) {
+        return customerService.loadUserByUsername(username).getRole().getName().equals("ADMIN");
     }
 
-    public boolean isUserAdminOrIsUsersSameAndUpdateIdEqual(long id, long updateId) {
-        return isAdmin(id) || (checkIfUsersSame(id) && checkIfUsersSame(updateId));
+    private boolean isUsersIdEquals(String currentUsername, long id) {
+        return customerService.loadUserByUsername(currentUsername).getId() == id;
     }
 
-    private boolean isCardOwner(long ownerId, long cardId) {
-        return customerService.readById(ownerId).getMyCards()
+    private boolean isCardOwner(String username, long cardId) {
+        return customerService.loadUserByUsername(username).getMyCards()
                 .stream()
                 .anyMatch(card -> card.getId() == cardId);
-    }
-
-    private boolean isAdmin(long id) {
-        if (checkIfUsersSame(id)) {
-            return customerService.readById(id).getRole().getName().equals("ADMIN");
-        }
-        return false;
     }
 
     private Object getPrincipal() {
