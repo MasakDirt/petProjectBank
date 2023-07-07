@@ -31,23 +31,23 @@ public class CardController {
     @GetMapping
     @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #ownerId)")
     List<CardResponse> getAll(@PathVariable("owner-id") long ownerId, Authentication authentication) {
-        var owner = customerService.readById(ownerId);
-        var responses = owner.getMyCards()
+        var principal = customerService.loadUserByUsername(authentication.getName());
+        var responses = customerService.readById(ownerId).getMyCards()
                 .stream()
                 .map(mapper::cardToCardResponse)
                 .collect(Collectors.toList());
 
-        log.info("=== GET-CARDS/{}-get === auth.name = {}", owner.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== GET-CARDS/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
         return responses;
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
     CardResponse getCardById(@PathVariable("owner-id") long ownerId, @PathVariable long id, Authentication authentication) {
-        var owner = customerService.readById(ownerId);
-        var response = cardService.readByOwner(owner, id);
+        var principal = customerService.loadUserByUsername(authentication.getName());
+        var response = cardService.readByOwner(customerService.readById(ownerId), id);
 
-        log.info("=== GET-CARD/{}-get === auth.name = {}", owner.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== GET-CARD/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
@@ -55,35 +55,37 @@ public class CardController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #ownerId)")
     CardResponse create(@PathVariable("owner-id") long ownerId, Authentication authentication) {
-        var owner = customerService.readById(ownerId);
+        var principal = customerService.loadUserByUsername(authentication.getName());
         var response = new Card();
-        accountService.create(response, owner);
+        accountService.create(response, customerService.readById(ownerId));
 
-        log.info("=== POST-CARD/{}-post === auth.name = {}", owner.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== POST-CARD/{}-post === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
     @PutMapping("{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
     CardResponse updateBalance(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, @RequestBody CardBalanceUpdateRequest request, Authentication authentication) {
-        var owner = customerService.readById(ownerId);
+        var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readById(id);
         accountService.replenishBalance(response.getAccount().getId(), request.getSum());
         cardService.update(response);
 
-        log.info("=== PUT-CARD/{}-put === auth.name = {}", owner.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== PUT-CARD/{}-put === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
     OperationResponse deleteCard(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, Authentication authentication){
-        var owner = customerService.readById(ownerId);
+        var principal = customerService.loadUserByUsername(authentication.getName());
         var card = cardService.readById(id);
         cardService.delete(id);
 
-        log.info("=== DELETE-CARD/{}-delete === auth.name = {}", owner.getRole().getName().toLowerCase(), authentication.getPrincipal());
-        return OperationResponse.builder().message("Card with number " + card.getNumber() + " has been deleted!").build();
+        log.info("=== DELETE-CARD/{}-delete === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        return OperationResponse.builder()
+                .message(customerService.readById(ownerId).getName() + " card with number " + card.getNumber() + " has been deleted!")
+                .build();
     }
 
 }
