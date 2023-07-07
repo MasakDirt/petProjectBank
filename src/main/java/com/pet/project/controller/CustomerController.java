@@ -55,12 +55,13 @@ public class CustomerController {
     CustomerResponse createAdmin(@Valid @RequestBody CustomerCreateRequest request, Authentication authentication) {
         var customer = customerService.create(mapper.createCustomerToCustomer(request),
                 roleService.readByName("ADMIN"));
+
         log.info("=== POST-CUSTOMER/admin-post === auth.name = {} === time = {}", authentication.getPrincipal(), LocalDateTime.now());
         return mapper.customerToCustomerResponse(customer);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #updateCustomer.id)")
+    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSameForUpdate(authentication.principal, #id, #updateCustomer.id)")
     CustomerResponse update(@PathVariable long id, @RequestBody @Valid CustomerUpdateRequest updateCustomer, Authentication authentication) {
         var user = customerService.readById(id);
         var customer = customerService.update(
@@ -75,10 +76,13 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
     OperationResponse delete(@PathVariable long id, Authentication authentication) {
+        var customer = customerService.readById(id);
         customerService.delete(id);
 
         log.info("=== DELETE-CUSTOMER/admin-delete === auth.name = {}", authentication.getPrincipal());
-        return OperationResponse.builder().message("User with id: " + id + " has been deleted!").build();
+        return OperationResponse.builder()
+                .message("User with name: " + customer.getName() + " has been deleted!")
+                .build();
     }
 
 
