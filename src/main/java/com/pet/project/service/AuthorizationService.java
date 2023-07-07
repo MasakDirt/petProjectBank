@@ -1,7 +1,6 @@
 package com.pet.project.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,12 +28,5 @@ public class AuthorizationService {
         return customerService.loadUserByUsername(username).getMyCards()
                 .stream()
                 .anyMatch(card -> card.getId() == cardId);
-    }
-
-    private Object getPrincipal() {
-        return SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
     }
 }
