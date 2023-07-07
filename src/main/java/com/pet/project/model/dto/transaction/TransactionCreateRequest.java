@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.DecimalMin;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,5 +18,6 @@ public class TransactionCreateRequest {
     private String cardNumber;
 
     @JsonProperty("amount_of_transfer")
+    @DecimalMin(value = "0.1", message = "Sum cannot be less than 0.1")
     private double transferAmount;
 }
