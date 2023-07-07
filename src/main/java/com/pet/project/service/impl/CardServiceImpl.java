@@ -20,8 +20,9 @@ public class CardServiceImpl implements CardService {
     private final CardRepository cardRepository;
 
     @Override
-    public Card create(Card card) {
+    public Card create(Card card, Customer owner) {
         try {
+            card.setOwner(owner);
             return cardRepository.save(card);
         } catch (InvalidDataAccessApiUsageException exception) {
             throw new NullEntityReferenceException("Card cannot be 'null'");
@@ -37,10 +38,8 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card update(Card card) {
         if (card != null) {
-            Card oldCard = readById(card.getId());
-            if (oldCard != null) {
-                return cardRepository.save(card);
-            }
+            readById(card.getId());
+            return cardRepository.save(card);
         }
         throw new NullEntityReferenceException("Card cannot be 'null'");
     }
@@ -62,7 +61,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card readByOwner(Customer owner, long cardId) {
-        if (owner != null){
+        if (owner != null) {
             return cardRepository.findCardByOwnerAndId(owner, cardId).orElseThrow(() ->
                     new EntityNotFoundException(owner.getFirstName() + "'s " + owner.getLastName() + " card with id: " + cardId + " not found"));
         }

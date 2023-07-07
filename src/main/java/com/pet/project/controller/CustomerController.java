@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,51 +29,61 @@ public class CustomerController {
     private final CustomerMapper mapper;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    List<CustomerResponse> getAll() {
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
+    List<CustomerResponse> getAll(Authentication authentication) {
         var responses = customerService.getAll().stream()
                 .map(mapper::customerToCustomerResponse)
                 .collect(Collectors.toList());
-        log.info("Admin checks all users");
+
+        log.info("=== GET-CUSTOMERS/admin-get === auth.name = {}", authentication.getPrincipal());
         return responses;
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or " +
-            "@authorizationService.checkIfUsersSame(#id)")
-    CustomerResponse getOne(@PathVariable long id) {
-        var response = mapper.customerToCustomerResponse(customerService.readById(id));
-        log.info("Customer with id {} was read", id);
+    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #id)")
+    CustomerResponse getOne(@PathVariable long id, Authentication authentication) {
+        var user = customerService.readById(id);
+        var response = mapper.customerToCustomerResponse(user);
+
+        log.info("=== GET-CUSTOMER/{}-get === auth.name = {}", user.getRole().getName().toLowerCase(), authentication.getPrincipal());
         return response;
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
     @ResponseStatus(HttpStatus.CREATED)
-    CustomerResponse createAdmin(@Valid @RequestBody CustomerCreateRequest request) {
-        var customer = customerService.create(mapper.customerCreateToCustomer(request),
+    CustomerResponse createAdmin(@Valid @RequestBody CustomerCreateRequest request, Authentication authentication) {
+        var customer = customerService.create(mapper.createCustomerToCustomer(request),
                 roleService.readByName("ADMIN"));
-        log.info("New customer account successfully create: {}", LocalDateTime.now());
+
+        log.info("=== POST-CUSTOMER/admin-post === auth.name = {} === time = {}", authentication.getPrincipal(), LocalDateTime.now());
         return mapper.customerToCustomerResponse(customer);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    CustomerResponse update(@PathVariable long id, @RequestBody @Valid CustomerUpdateRequest updateCustomer) {
+    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSameForUpdate(authentication.principal, #id, #updateCustomer.id)")
+    CustomerResponse update(@PathVariable long id, @RequestBody @Valid CustomerUpdateRequest updateCustomer, Authentication authentication) {
+        var user = customerService.readById(id);
         var customer = customerService.update(
                 mapper.updateCustomerToCustomer(updateCustomer),
                 updateCustomer.getOldPassword()
         );
-        log.info("User with id {} successfully updated", id);
+
+        log.info("=== PUT-CUSTOMER/{}-put === auth.name = {}", user.getRole().getName().toLowerCase(), authentication.getPrincipal());
         return mapper.customerToCustomerResponse(customer);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or " +
-            "@authorizationService.checkIfUsersSame(#id)")
-    OperationResponse delete(@PathVariable long id) {
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
+    OperationResponse delete(@PathVariable long id, Authentication authentication) {
+        var customer = customerService.readById(id);
         customerService.delete(id);
-        log.info("User with id {} was delete", id);
-        return new OperationResponse("User with id: " + id + " has been deleted!");
+
+        log.info("=== DELETE-CUSTOMER/admin-delete === auth.name = {}", authentication.getPrincipal());
+        return OperationResponse.builder()
+                .message("User with name: " + customer.getName() + " has been deleted!")
+                .build();
     }
+
+
 }

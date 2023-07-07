@@ -1,5 +1,6 @@
 package com.pet.project;
 
+import com.pet.project.model.dto.transaction.TransactionCreateRequest;
 import com.pet.project.model.entity.*;
 import com.pet.project.service.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @SpringBootApplication
@@ -50,78 +50,76 @@ public class MyBankStarter implements CommandLineRunner {
     private void creatingFirstUser(Role role) {
         Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "1111", role);
 
-        Card firstCard = createCard(120, userAdmin);
-        Account accountFirstCard = firstCard.getAccount();
-        Card secondCard = createCard(2000, userAdmin);
-        Account accountSecondCard = secondCard.getAccount();
-
-        Transaction transaction1 = createTransaction(secondCard);
-        Transaction transaction2 = createTransaction(secondCard);
-        Transaction transaction3 = createTransaction(firstCard);
-        Transaction transaction4 = createTransaction(firstCard);
-
-        accountFirstCard.setTransactions(List.of(transaction1, transaction2));
-        accountSecondCard.setTransactions(List.of(transaction3, transaction4));
-
-        transaction1.setAccount(accountFirstCard);
-        transaction2.setAccount(accountFirstCard);
-        transaction3.setAccount(accountSecondCard);
-        transaction4.setAccount(accountSecondCard);
+        Card firstCard = createCard(userAdmin);
+        Account accountFirst = firstCard.getAccount();
+        accountFirst = replenishBalance(accountFirst, 2000);
+        Card secondCard = createCard(userAdmin);
+        Account accountSecond = secondCard.getAccount();
+        accountSecond = replenishBalance(accountSecond, 7000);
+        firstCard = accountFirst.getCard();
+        secondCard = accountSecond.getCard();
 
         List<Card> cards = List.of(firstCard, secondCard);
 
         userAdmin.setMyCards(cards);
 
-        saveAllInDb(userAdmin, cards, List.of(accountFirstCard, accountSecondCard), 10, role, transaction1, transaction2, transaction3, transaction4);
+        Transaction transaction1 = createTransaction(secondCard.getNumber(), accountFirst, 500);
+        Transaction transaction2 = createTransaction(secondCard.getNumber(), accountFirst, 789.34);
+        Transaction transaction3 = createTransaction(firstCard.getNumber(), accountSecond, 1250.890);
+        Transaction transaction4 = createTransaction(firstCard.getNumber(), accountSecond, 900);
+
+        accountFirst.setTransactions(List.of(transaction1, transaction2));
+        accountSecond.setTransactions(List.of(transaction3, transaction4));
+
+        accountService.update(accountFirst);
+        accountService.update(accountSecond);
     }
 
     private void creatingSecondUser(Role role) {
         Customer user = createCustomer("Nick", "Miles", "nike@mail.co", "2222", role);
 
-        Card firstCard = createCard(3000, user);
-        Account accountFirstCard = firstCard.getAccount();
-        Card secondCard = createCard(4000, user);
-        Account accountSecondCard = secondCard.getAccount();
+        Card firstCard = createCard(user);
+        Account accountFirst = firstCard.getAccount();
+        accountFirst = replenishBalance(accountFirst, 200);
 
-        Transaction transaction5 = createTransaction(secondCard);
-        Transaction transaction6 = createTransaction(secondCard);
-        Transaction transaction7 = createTransaction(firstCard);
-
-        accountFirstCard.setTransactions(List.of(transaction5, transaction6));
-        accountSecondCard.setTransactions(List.of(transaction7));
-
-        transaction5.setAccount(accountFirstCard);
-        transaction6.setAccount(accountFirstCard);
-        transaction7.setAccount(accountSecondCard);
+        Card secondCard = createCard(user);
+        Account accountSecond = secondCard.getAccount();
+        accountSecond = replenishBalance(accountSecond, 400);
 
         List<Card> cards = List.of(firstCard, secondCard);
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(accountFirstCard, accountSecondCard), 900, role, transaction5, transaction6);
+        Transaction transaction5 = createTransaction(secondCard.getNumber(), accountFirst, 20);
+        Transaction transaction6 = createTransaction(secondCard.getNumber(), accountFirst, 130);
+        Transaction transaction7 = createTransaction(firstCard.getNumber(), accountSecond, 333);
+
+        accountSecond.setTransactions(List.of(transaction7));
+        accountFirst.setTransactions(List.of(transaction5, transaction6));
+
+        accountService.update(accountFirst);
+        accountService.update(accountSecond);
     }
 
     private void creatingThirdUser(Role role) {
         Customer user = createCustomer("Mila", "Miles", "mila@mail.co", "3333", role);
 
-        Card card = createCard(10000, user);
+        Card card = createCard(user);
         Account account = card.getAccount();
-
-        Transaction transaction8 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
-        Transaction transaction9 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 3));
-        Transaction transaction10 = createTransaction(cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4));
-
-        account.setTransactions(List.of(transaction8, transaction9, transaction10));
-
-        transaction8.setAccount(account);
-        transaction9.setAccount(account);
-        transaction10.setAccount(account);
+        account = replenishBalance(account, 20000);
 
         List<Card> cards = List.of(card);
 
         user.setMyCards(cards);
 
-        saveAllInDb(user, cards, List.of(account), 1000, role, transaction8, transaction9, transaction10);
+        Card recepientCard = cardService.readByOwner(customerService.loadUserByUsername("nike@mail.co"), 4);
+
+        Transaction transaction8 = createTransaction(recepientCard.getNumber(), account, 1234);
+        Transaction transaction9 = createTransaction(recepientCard.getNumber(), account, 1456);
+        Transaction transaction10 = createTransaction(recepientCard.getNumber(), account, 6789);
+
+        account.setTransactions(List.of(transaction8, transaction9, transaction10));
+        accountService.update(account);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
@@ -130,45 +128,31 @@ public class MyBankStarter implements CommandLineRunner {
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setPassword(password);
-        customer.setRole(role);
-        return customer;
+
+        log.info("Customer === {} - with email: {} === was created!", customer.getName(), customer.getUsername());
+        return customerService.create(customer, role);
     }
 
-    private Card createCard(int balance, Customer owner) {
-        Card card = new Card();
-        card.setOwner(owner);
-        Account account = new Account();
-        account.setBalance(new BigDecimal(balance));
-        account.setCard(card);
-        card.setAccount(account);
+    private Card createCard(Customer owner) {
+        var card = accountService.create(new Card(), owner).getCard();
+
+        log.info("Card === with number {} === was created.", card.getNumber());
         return card;
     }
 
-    private Transaction createTransaction(Card card) {
-        Transaction transaction = new Transaction();
-        transaction.setRecipientCard(card.getNumber());
-        return transaction;
+    private Transaction createTransaction(String recipientCard, Account account, double transferAmount) {
+        TransactionCreateRequest request = new TransactionCreateRequest(recipientCard, transferAmount);
+
+        var transac = transactionService.create(request, account.getId());
+        log.info("Transaction === for card number {} === was created.", account.getCard().getNumber());
+        return transac;
     }
 
-    private void saveAllInDb(Customer customer, List<Card> cards, List<Account> accounts, int sum, Role role, Transaction... transactions) {
-        customerService.create(customer, role);
-        log.info(customer.getName() + " was saved in db");
-        for (Card card : cards) {
-            cardService.create(card);
-            log.info("Card with number: " + card.getNumber() + " for " + card.getOwner().getName() + " is saved.");
-        }
+    private Account replenishBalance(Account account, double sum) {
+        var response = accountService.replenishBalance(account.getId(), sum);
+        cardService.update(response.getCard());
 
-
-        for (Account account : accounts) {
-            accountService.create(account);
-            log.info("Account to the card " + account.getCard().getNumber() + " is saved.");
-        }
-
-
-        for (Transaction transaction : transactions) {
-            transactionService.create(transaction, sum);
-            log.info("Transaction to the card: " + transaction.getRecipientCard() + " is saved.");
-        }
-
+        log.info("Card === {} balance was updated, added {} funds", response.getCard().getNumber(), sum);
+        return response;
     }
 }

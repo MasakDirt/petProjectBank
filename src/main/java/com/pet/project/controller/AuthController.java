@@ -5,7 +5,6 @@ import com.pet.project.model.dto.auth.TokenResponse;
 import com.pet.project.model.dto.customer.CustomerCreateRequest;
 import com.pet.project.model.dto.customer.CustomerMapper;
 import com.pet.project.model.dto.customer.CustomerResponse;
-import com.pet.project.model.entity.Customer;
 import com.pet.project.service.CustomerService;
 import com.pet.project.service.RoleService;
 import com.pet.project.utils.JwtUtils;
@@ -36,19 +35,19 @@ public class AuthController {
         UserDetails userDetails = customerService.loadUserByUsername(request.getUsername());
 
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
         }
 
-        log.info("Customer was successfully login");
+        log.info("=== POST-LOGIN/login-post === auth.name = {} === time = {}", userDetails.getUsername(), LocalDateTime.now());
         return new TokenResponse(jwtUtils.generateTokenFromUsername(userDetails.getUsername()));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerResponse createNewCustomer(@RequestBody @Valid CustomerCreateRequest signUser) {
-        Customer customer = customerService.create(mapper.customerCreateToCustomer(signUser),
+        var customer = customerService.create(mapper.createCustomerToCustomer(signUser),
                 roleService.readByName("USER"));
-        log.info("New customer account successfully create: {}", LocalDateTime.now());
+        log.info("=== POST-REGISTER/register-post === reg.name = {} === time = {}", customer.getUsername(), LocalDateTime.now());
         return mapper.customerToCustomerResponse(customer);
     }
 }

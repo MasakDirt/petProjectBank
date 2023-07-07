@@ -7,7 +7,7 @@ import com.pet.project.model.entity.Transaction;
 import java.util.List;
 
 public interface CardService {
-    Card create(Card card);
+    Card create(Card card,  Customer owner);
     void delete(long id);
     Card update(Card card);
     Card readById(long id);

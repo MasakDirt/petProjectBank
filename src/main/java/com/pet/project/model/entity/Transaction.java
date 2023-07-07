@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,8 +28,14 @@ public class Transaction {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @DecimalMin(value = "0", message = "Account cannot be less than 0")
+    @DecimalMin(value = "0.1", message = "Transfer amount cannot be less than 0.1")
+    private BigDecimal transferAmount;
+
+    @DecimalMin(value = "0", message = "Balance cannot be less than 0")
     private BigDecimal balanceAfter;
+
+    @DecimalMax(value = "0", message = "Withdrawals cannot be bigger than 0")
+    private BigDecimal fundsWithdrawn;
 
     @JoinColumn(name = "recipient_card_id")
     private String recipientCard;

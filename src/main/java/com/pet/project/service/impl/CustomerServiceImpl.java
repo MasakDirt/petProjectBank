@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer update(Customer customer, String oldPassword) {
         if (customer != null && oldPassword != null) {
             Customer oldCustomer = readById(customer.getId());
-            return checkPasswords(oldPassword, oldCustomer);
+            return checkPasswords(oldPassword, customer, oldCustomer);
         }
         throw new NullEntityReferenceException("Customer or password cannot be 'null'");
     }
@@ -69,10 +69,16 @@ public class CustomerServiceImpl implements CustomerService {
         return customers.isEmpty() ? new ArrayList<>() : customers;
     }
 
-    private Customer checkPasswords(String oldPassword, Customer customer) {
-        if (!passwordEncoder.matches(oldPassword, customer.getPassword())) {
+    private Customer checkPasswords(String oldPassword, Customer newCustomer, Customer oldCustomer) {
+        if (!passwordEncoder.matches(oldPassword, oldCustomer.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong old password");
         }
-        return customerRepository.save(customer);
+
+        newCustomer.setPassword(passwordEncoder.encode(newCustomer.getPassword()));
+        newCustomer.setEmail(oldCustomer.getEmail());
+        newCustomer.setRole(oldCustomer.getRole());
+        newCustomer.setMyCards(oldCustomer.getMyCards());
+
+        return customerRepository.save(newCustomer);
     }
 }
