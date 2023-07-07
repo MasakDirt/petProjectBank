@@ -25,18 +25,18 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public Transaction create(Transaction transaction, double sum) {
-        if (sum < 0.1) {
+    public Transaction create(Transaction transaction, double transferAmount) {
+        if (transferAmount < 0.1) {
             throw new InvalidAmountException("Sum must be greater than 0.1");
         }
         try {
             Card recipientCard = cardService.readByNumber(transaction.getRecipientCard());
 
-            if (recipientCard.getAccount().getBalance().doubleValue() < sum) {
-                throw new InsufficientFundsException("There are not enough funds on your card " + recipientCard.getNumber() + " for the transaction");
+            if (transaction.getAccount().getBalance().doubleValue() < transferAmount) {
+                throw new InsufficientFundsException("There are not enough funds on your card " + transaction.getAccount().getCard().getNumber() + " for the transaction");
             }
 
-            addedAndSubtractBalances(transaction, recipientCard, sum);
+            addedAndSubtractBalances(transaction, recipientCard, transferAmount);
 
             accountService.update(transaction.getAccount());
             accountService.update(recipientCard.getAccount());
