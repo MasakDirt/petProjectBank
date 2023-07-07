@@ -3,6 +3,8 @@ package com.pet.project.service.impl;
 import com.pet.project.exception.InsufficientFundsException;
 import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
+import com.pet.project.model.dto.transaction.TransactionCreateRequest;
+import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.TransactionRepository;
@@ -25,16 +27,16 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public Transaction create(Transaction transaction, double transferAmount) {
+    public Transaction create(TransactionCreateRequest request, long accountId) {
+        double transferAmount = request.getTransferAmount();
         if (transferAmount < 0.1) {
             throw new InvalidAmountException("Sum must be greater than 0.1");
         }
-        try {
-            Card recipientCard = cardService.readByNumber(transaction.getRecipientCard());
 
-            if (transaction.getAccount().getBalance().doubleValue() < transferAmount) {
-                throw new InsufficientFundsException("There are not enough funds on your card " + transaction.getAccount().getCard().getNumber() + " for the transaction");
-            }
+        try {
+            Card recipientCard = cardService.readByNumber(request.getCardNumber());
+
+            Transaction transaction = createNewTransaction(accountId, transferAmount, recipientCard.getNumber());
 
             addedAndSubtractBalances(transaction, recipientCard, transferAmount);
 
@@ -73,15 +75,34 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll();
     }
 
-    private void addedAndSubtractBalances(Transaction transaction, Card recipientCard, double sum) {
+    private Transaction createNewTransaction(long accountId, double transferAmount, String cardNumber) {
+        Account account = accountService.readById(accountId);
+
+        if (account.getBalance().doubleValue() < transferAmount) {
+            throw new InsufficientFundsException("There are not enough funds on your card " + account.getCard().getNumber() + " for the transaction");
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setAccount(account);
+        transaction.setRecipientCard(cardNumber);
+        transaction.setTransferAmount(new BigDecimal(transferAmount));
+
+        return transaction;
+    }
+
+    private void addedAndSubtractBalances(Transaction transaction, Card recipientCard, double transferAmount) {
         transaction.setBalanceAfter(
-                transaction.getAccount().getBalance().subtract(new BigDecimal(sum))
+                transaction.getAccount().getBalance().subtract(new BigDecimal(transferAmount))
         );
 
         transaction.getAccount().setBalance(transaction.getBalanceAfter());
 
         recipientCard.getAccount().setBalance(
-                recipientCard.getAccount().getBalance().add(new BigDecimal(sum))
+                recipientCard.getAccount().getBalance().add(new BigDecimal(transferAmount))
         );
+
+        double fundsWithdrawn = transferAmount - (transferAmount * 2);
+
+        transaction.setFundsWithdrawn(new BigDecimal(fundsWithdrawn));
     }
 }
