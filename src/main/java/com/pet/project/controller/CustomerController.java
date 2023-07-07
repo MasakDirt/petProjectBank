@@ -78,7 +78,7 @@ public class CustomerController {
         customerService.delete(id);
 
         log.info("=== DELETE-CUSTOMER/admin-delete === auth.name = {}", authentication.getPrincipal());
-        return new OperationResponse("User with id: " + id + " has been deleted!");
+        return OperationResponse.builder().message("User with id: " + id + " has been deleted!").build();
     }
 
 
