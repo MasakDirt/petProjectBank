@@ -1,13 +1,15 @@
 package com.pet.project.service;
 
 import com.pet.project.model.entity.Account;
+import com.pet.project.model.entity.Card;
+import com.pet.project.model.entity.Customer;
 
 import java.util.List;
 
 public interface AccountService {
-    Account create(Account account);
+    Account create(Card card, Customer owner);
 
-    void replenishBalance(long id, double sum);
+    Account replenishBalance(long id, double sum);
 
     Account update(Account account);
 
