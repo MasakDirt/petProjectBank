@@ -29,7 +29,7 @@ public class CustomerController {
     private final CustomerMapper mapper;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
     List<CustomerResponse> getAll(Authentication authentication) {
         var responses = customerService.getAll().stream()
                 .map(mapper::customerToCustomerResponse)
@@ -40,7 +40,7 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(#id)")
+    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #id)")
     CustomerResponse getOne(@PathVariable long id, Authentication authentication) {
         var user = customerService.readById(id);
         var response = mapper.customerToCustomerResponse(user);
@@ -50,7 +50,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
     @ResponseStatus(HttpStatus.CREATED)
     CustomerResponse createAdmin(@Valid @RequestBody CustomerCreateRequest request, Authentication authentication) {
         var customer = customerService.create(mapper.createCustomerToCustomer(request),
@@ -60,7 +60,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSameAndUpdateIdEqual(#id, #updateCustomer.id)")
+    @PreAuthorize("@authorizationService.isUserAdminOrIsUsersSame(authentication.principal, #updateCustomer.id)")
     CustomerResponse update(@PathVariable long id, @RequestBody @Valid CustomerUpdateRequest updateCustomer, Authentication authentication) {
         var user = customerService.readById(id);
         var customer = customerService.update(
@@ -73,7 +73,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("@authorizationService.isAdmin(authentication.principal)")
     OperationResponse delete(@PathVariable long id, Authentication authentication) {
         customerService.delete(id);
 
