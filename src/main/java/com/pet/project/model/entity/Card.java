@@ -57,10 +57,6 @@ public class Card {
     }
 
     private void generateCardNumber() {
-        int randomFirstPart = new Random().nextInt(10000);
-        int randomSecondPart = new Random().nextInt(10000);
-        int randomThirdPart = new Random().nextInt(10000);
-
-        number = String.format("7835 %04d %04d %04d", randomFirstPart, randomSecondPart, randomThirdPart);
+        number = String.format("7835 %04d %04d %04d", new Random().nextInt(10000), new Random().nextInt(10000), new Random().nextInt(10000));
     }
 }
