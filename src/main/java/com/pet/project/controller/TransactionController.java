@@ -32,7 +32,7 @@ public class TransactionController {
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #cardId)")
     List<TransactionHistoryResponse> getAll(@PathVariable("owner-id") long ownerId, @PathVariable("card-id") long cardId, Authentication authentication) {
         var principal = customerService.loadUserByUsername(authentication.getName());
-        var responses = cardService.readById(cardId).getAccount().getTransactions()
+        var responses = cardService.getHistory(cardId)
                 .stream()
                 .map(mapper::transactionToTransactionHistoryResponse)
                 .collect(Collectors.toList());
