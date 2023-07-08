@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pet.project.controller.ControllerStaticHelper.getRole;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -37,7 +39,7 @@ public class CardController {
                 .map(mapper::cardToCardResponse)
                 .collect(Collectors.toList());
 
-        log.info("=== GET-CARDS/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== GET-CARDS/{}-get === auth.name = {}", getRole(principal), principal.getUsername());
         return responses;
     }
 
@@ -47,7 +49,7 @@ public class CardController {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readByOwner(customerService.readById(ownerId), id);
 
-        log.info("=== GET-CARD/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== GET-CARD/{}-get === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
@@ -59,7 +61,7 @@ public class CardController {
         var response = new Card();
         accountService.create(response, customerService.readById(ownerId));
 
-        log.info("=== POST-CARD/{}-post === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== POST-CARD/{}-post === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
@@ -72,21 +74,20 @@ public class CardController {
         accountService.replenishBalance(response.getAccount().getId(), request.getSum());
         cardService.update(response);
 
-        log.info("=== PUT-CARD/{}-put === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== PUT-CARD/{}-put === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.cardToCardResponse(response);
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
-    OperationResponse deleteCard(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, Authentication authentication){
+    OperationResponse deleteCard(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, Authentication authentication) {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var card = cardService.readById(id);
         cardService.delete(id);
 
-        log.info("=== DELETE-CARD/{}-delete === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== DELETE-CARD/{}-delete === auth.name = {}", getRole(principal), principal.getUsername());
         return OperationResponse.builder()
                 .message(customerService.readById(ownerId).getName() + " card with number " + card.getNumber() + " has been deleted!")
                 .build();
     }
-
 }

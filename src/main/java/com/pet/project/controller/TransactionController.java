@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pet.project.controller.ControllerStaticHelper.getRole;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -37,7 +39,7 @@ public class TransactionController {
                 .map(mapper::transactionToTransactionHistoryResponse)
                 .collect(Collectors.toList());
 
-        log.info("=== GET-TRANSACTIONS/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== GET-TRANSACTIONS/{}-get === auth.name = {}", getRole(principal), principal.getUsername());
         return responses;
     }
 
@@ -48,7 +50,7 @@ public class TransactionController {
         var response = transactionService.readById(id);
         var principal = customerService.loadUserByUsername(authentication.getName());
 
-        log.info("=== GET-TRANSACTION/{}-get === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== GET-TRANSACTION/{}-get === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.transactionToTransactionReadResponse(response);
     }
 
@@ -56,10 +58,10 @@ public class TransactionController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@authorizationService.isUserValidUserAndIsCardOwner(authentication.principal, #ownerId, #cardId)")
     TransactionReadResponse create(@PathVariable("owner-id") long ownerId, @PathVariable("card-id") long cardId,
-                                      @RequestBody TransactionCreateRequest request, Authentication authentication) {
+                                   @RequestBody TransactionCreateRequest request, Authentication authentication) {
         var response = transactionService.create(request, cardService.readById(cardId).getAccount().getId());
 
-        log.info("=== POST-TRANSACTION/{}-post === auth.name = {}", customerService.readById(ownerId).getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== POST-TRANSACTION/{}-post === auth.name = {}", getRole(customerService.readById(ownerId)), authentication.getPrincipal());
         return mapper.transactionToTransactionReadResponse(response);
     }
 
@@ -70,7 +72,7 @@ public class TransactionController {
         transactionService.delete(id);
         var principal = customerService.loadUserByUsername(authentication.getName());
 
-        log.info("=== DELETE-TRANSACTION/{}-delete === auth.name = {}", principal.getRole().getName().toLowerCase(), principal.getUsername());
+        log.info("=== DELETE-TRANSACTION/{}-delete === auth.name = {}", getRole(principal), principal.getUsername());
         return OperationResponse.builder()
                 .message("Transaction for customer " + customerService.readById(ownerId).getName() +
                         " and his/her card " + cardService.readById(cardId).getNumber() + " has been deleted!")
