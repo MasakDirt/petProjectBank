@@ -9,7 +9,6 @@ import com.pet.project.repository.AccountRepository;
 import com.pet.project.service.AccountService;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,15 +24,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account create(Card card, Customer owner) {
-        try {
+        if (card != null && owner != null) {
             var account = new Account();
             card.setAccount(account);
+
             cardService.create(card, owner);
             account.setCard(card);
             return accountRepository.save(account);
-        } catch (InvalidDataAccessApiUsageException invalidDataAccessApiUsageException) {
-            throw new NullEntityReferenceException("Account cannot be 'null'");
         }
+        throw new NullEntityReferenceException("Card or owner cannot be 'null'");
     }
 
     @Override
@@ -45,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(
                 account.getBalance().add(new BigDecimal(sum))
         );
-      return update(account);
+        return update(account);
     }
 
     @Override
