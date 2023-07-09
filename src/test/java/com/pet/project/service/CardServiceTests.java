@@ -29,7 +29,6 @@ public class CardServiceTests {
     private final CardService cardService;
     private final CustomerService customerService;
     private List<Card> cards;
-    private static int cardId = 6;
 
     @Autowired
     public CardServiceTests(CardService cardService, CustomerService customerService) {
