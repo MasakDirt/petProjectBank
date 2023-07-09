@@ -29,7 +29,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setRole(role);
             return customerRepository.save(customer);
         } catch (InvalidDataAccessApiUsageException | NullPointerException exception) {
-            throw new NullEntityReferenceException("Customer cannot be 'null'");
+            throw new NullEntityReferenceException("Customer or Role cannot be 'null'");
         }
     }
 

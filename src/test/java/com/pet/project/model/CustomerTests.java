@@ -85,6 +85,7 @@ public class CustomerTests {
 
     private static Stream<Arguments> provideInvalidCustomerEmail() {
         return Stream.of(
+                Arguments.of("notvalid@com", "notvalid@com"),
                 Arguments.of("notvalid@", "notvalid@"),
                 Arguments.of("no@valid...", "no@valid..."),
                 Arguments.of("no@val.", "no@val."),
