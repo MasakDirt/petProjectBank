@@ -3,6 +3,7 @@ package com.pet.project.service;
 import com.pet.project.exception.InsufficientFundsException;
 import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
+import com.pet.project.model.dto.transaction.TransactionCreateRequest;
 import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
@@ -73,18 +74,16 @@ public class TransactionServiceTests {
         BigDecimal recipientBalance = recipient.getAccount().getBalance();
         BigDecimal accountFromWhichCreatePaymentBalance = account.getBalance();
 
-        Transaction transaction = new Transaction();
-        transaction.setRecipientCard(recipient.getNumber());
-        transaction.setAccount(account);
-        transaction.setId(11L);
+        var request = new TransactionCreateRequest(recipient.getNumber(), sum);
 
-        transactionService.create(transaction, sum);
+        Transaction transaction = transactionService.create(request, account.getId());
+
 
         assertAll(
                 () -> assertEquals(cardService.readById(recipient.getId()).getAccount().getBalance(), recipientBalance.add(new BigDecimal(sum)),
                         "Recipient card not added sum to it`s balance, please check why it was"),
 
-                () -> assertEquals(accountService.readById(account.getId()).getBalance(),
+                () -> assertEquals(accountService.readById(transaction.getAccount().getId()).getBalance(),
                         accountFromWhichCreatePaymentBalance.subtract(new BigDecimal(sum)),
                         "Account from which transaction was create not subtract sum, please check why it was"),
 
@@ -95,33 +94,33 @@ public class TransactionServiceTests {
 
     @Test
     public void checkNotValidCreateTransaction() {
-        int sum = 100;
 
         Transaction transaction = createTransaction();
         transaction.setId(11L);
 
         assertAll(
-                () -> assertThrows(NullEntityReferenceException.class, () -> transactionService.create(null, sum),
+                () -> assertThrows(NullEntityReferenceException.class, () -> transactionService.create(null, 1L),
                         "There need to be NullEntityReferenceException because we are pass null."),
 
-                () -> assertThrows(InsufficientFundsException.class, () -> transactionService.create(transaction, 100000),
+                () -> assertThrows(InsufficientFundsException.class, () ->
+                                transactionService.create(new TransactionCreateRequest(cardService.readById(1L).getNumber(), 10000000), 1L),
                         "There need to be InsufficientFundsException because we are pass sum that account balance has not."),
 
-                () -> assertThrows(InvalidAmountException.class, () -> transactionService.create(transaction, 0),
+                () -> assertThrows(InvalidAmountException.class, () ->
+                                transactionService.create(new TransactionCreateRequest(cardService.readById(1L).getNumber(), 0), 1L),
                         "There need to be InvalidAmountException because we are pass sum that we cannot transfer."),
 
-                () -> assertThrows(NullEntityReferenceException.class, () -> transactionService.create(new Transaction(), sum),
-                        "There need to be NullEntityReferenceException because we are pass object without tabular values.")
+                () -> assertThrows(InvalidAmountException.class, () ->
+                                transactionService.create(new TransactionCreateRequest(), 1L),
+                        "There need to be InvalidAmountException because we are pass object without tabular values.")
         );
     }
 
     @Test
     public void checkReadByIdTransaction() {
-        Transaction transaction = createTransaction();
-        transaction.setId(12L);
-        transactionService.create(transaction, 150);
+        var expected = transactionService.create(new TransactionCreateRequest(cardService.readById(3L).getNumber(), 150), 3L);
 
-        assertEquals(transaction, transactionService.readById(transaction.getId()),
+        assertEquals(expected, transactionService.readById(expected.getId()),
                 "Transactions need to be equals, if it isn`t, please check transactionId");
     }
 
