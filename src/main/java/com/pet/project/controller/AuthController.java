@@ -11,7 +11,6 @@ import com.pet.project.utils.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public TokenResponse login(@RequestBody @Valid LoginRequest request) {
-        UserDetails userDetails = customerService.loadUserByUsername(request.getUsername());
+        var userDetails = customerService.loadUserByUsername(request.getUsername());
 
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
@@ -47,6 +46,7 @@ public class AuthController {
     public CustomerResponse createNewCustomer(@RequestBody @Valid CustomerCreateRequest signUser) {
         var customer = customerService.create(mapper.createCustomerToCustomer(signUser),
                 roleService.readByName("USER"));
+
         log.info("=== POST-REGISTER/register-post === reg.name = {} === time = {}", customer.getUsername(), LocalDateTime.now());
         return mapper.customerToCustomerResponse(customer);
     }

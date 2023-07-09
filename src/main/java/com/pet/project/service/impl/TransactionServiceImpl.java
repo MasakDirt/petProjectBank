@@ -4,7 +4,6 @@ import com.pet.project.exception.InsufficientFundsException;
 import com.pet.project.exception.InvalidAmountException;
 import com.pet.project.exception.NullEntityReferenceException;
 import com.pet.project.model.dto.transaction.TransactionCreateRequest;
-import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.TransactionRepository;
@@ -34,9 +33,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         try {
-            Card recipientCard = cardService.readByNumber(request.getCardNumber());
+            var recipientCard = cardService.readByNumber(request.getCardNumber());
 
-            Transaction transaction = createNewTransaction(accountId, transferAmount, recipientCard.getNumber());
+            var transaction = createNewTransaction(accountId, transferAmount, recipientCard.getNumber());
 
             addedAndSubtractBalances(transaction, recipientCard, transferAmount);
 
@@ -51,7 +50,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void delete(long id) {
-        Transaction transaction = readById(id);
+        var transaction = readById(id);
         transactionRepository.delete(transaction);
     }
 
@@ -76,13 +75,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Transaction createNewTransaction(long accountId, double transferAmount, String cardNumber) {
-        Account account = accountService.readById(accountId);
+        var account = accountService.readById(accountId);
 
         if (account.getBalance().doubleValue() < transferAmount) {
             throw new InsufficientFundsException("There are not enough funds on your card " + account.getCard().getNumber() + " for the transaction");
         }
 
-        Transaction transaction = new Transaction();
+        var transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setRecipientCard(cardNumber);
         transaction.setTransferAmount(new BigDecimal(transferAmount));

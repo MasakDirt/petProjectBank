@@ -41,14 +41,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void delete(long id) {
-        Customer customer = readById(id);
+        var customer = readById(id);
         customerRepository.delete(customer);
     }
 
     @Override
     public Customer update(Customer customer, String oldPassword) {
         if (customer != null && oldPassword != null) {
-            Customer oldCustomer = readById(customer.getId());
+            var oldCustomer = readById(customer.getId());
             return checkPasswords(oldPassword, customer, oldCustomer);
         }
         throw new NullEntityReferenceException("Customer or password cannot be 'null'");
@@ -65,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> getAll() {
-        List<Customer> customers = customerRepository.findAll();
+        var customers = customerRepository.findAll();
         return customers.isEmpty() ? new ArrayList<>() : customers;
     }
 

@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.pet.project.controller.ControllerStaticHelper.getRole;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -45,7 +47,7 @@ public class CustomerController {
         var user = customerService.readById(id);
         var response = mapper.customerToCustomerResponse(user);
 
-        log.info("=== GET-CUSTOMER/{}-get === auth.name = {}", user.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== GET-CUSTOMER/{}-get === auth.name = {}", getRole(user), authentication.getPrincipal());
         return response;
     }
 
@@ -69,7 +71,7 @@ public class CustomerController {
                 updateCustomer.getOldPassword()
         );
 
-        log.info("=== PUT-CUSTOMER/{}-put === auth.name = {}", user.getRole().getName().toLowerCase(), authentication.getPrincipal());
+        log.info("=== PUT-CUSTOMER/{}-put === auth.name = {}", getRole(user), authentication.getPrincipal());
         return mapper.customerToCustomerResponse(customer);
     }
 

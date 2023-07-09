@@ -17,7 +17,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String number;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -30,7 +30,7 @@ public class Card {
     private Customer owner;
 
     public Card() {
-        createNumberCard();
+        generateCardNumber();
     }
 
     @Override
@@ -56,11 +56,7 @@ public class Card {
                 '}';
     }
 
-    private void createNumberCard() {
-        int randomPart = new Random().nextInt(10000);
-        int firstPart = randomPart > 5000 ? randomPart / 2 : randomPart * 2;
-        int secondPart = firstPart > 2500 ? (firstPart < 7500 ? firstPart + 2347 : firstPart - 1589) : firstPart * 2 + 259;
-
-        number = String.format("7835 %04d %04d %04d", randomPart, firstPart, secondPart);
+    private void generateCardNumber() {
+        number = String.format("7835 %04d %04d %04d", new Random().nextInt(10000), new Random().nextInt(10000), new Random().nextInt(10000));
     }
 }

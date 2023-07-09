@@ -31,7 +31,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void delete(long id) {
-        Card card = readById(id);
+        var card = readById(id);
         cardRepository.delete(card);
     }
 
@@ -78,13 +78,13 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public List<Card> getAll() {
-        List<Card> cards = cardRepository.findAll();
+        var cards = cardRepository.findAll();
         return cards.isEmpty() ? new ArrayList<>() : cards;
     }
 
     @Override
     public List<Transaction> getHistory(long cardId) {
-        Card card = readById(cardId);
+        var card = readById(cardId);
         return card.getAccount().getTransactions();
     }
 }

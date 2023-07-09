@@ -26,7 +26,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account create(Card card, Customer owner) {
         try {
-            Account account = new Account();
+            var account = new Account();
             card.setAccount(account);
             cardService.create(card, owner);
             account.setCard(card);
@@ -41,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
         if (sum < 0.1) {
             throw new InvalidAmountException("Sum must be greater than 0.1");
         }
-        Account account = readById(id);
+        var account = readById(id);
         account.setBalance(
                 account.getBalance().add(new BigDecimal(sum))
         );
@@ -65,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Account> getAll() {
-        List<Account> accounts = accountRepository.findAll();
+        var accounts = accountRepository.findAll();
         return accounts.isEmpty() ? new ArrayList<>() : accounts;
     }
 }
