@@ -7,7 +7,6 @@ import com.pet.project.model.entity.Transaction;
 import com.pet.project.repository.CardRepository;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -21,12 +20,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card create(Card card, Customer owner) {
-        try {
+        if (card != null && owner != null) {
             card.setOwner(owner);
             return cardRepository.save(card);
-        } catch (InvalidDataAccessApiUsageException exception) {
-            throw new NullEntityReferenceException("Card cannot be 'null'");
         }
+        throw new NullEntityReferenceException("Card or owner cannot be 'null'");
     }
 
     @Override
