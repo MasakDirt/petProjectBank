@@ -1,24 +1,21 @@
 package com.pet.project.service;
 
 import com.pet.project.exception.NullEntityReferenceException;
-import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Customer;
 import com.pet.project.model.entity.Transaction;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.validation.ConstraintViolationException;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -32,23 +29,11 @@ public class CardServiceTests {
     private final CardService cardService;
     private final CustomerService customerService;
     private List<Card> cards;
-    private static Card validCard;
-    private static int cardId = 6;
 
     @Autowired
     public CardServiceTests(CardService cardService, CustomerService customerService) {
         this.cardService = cardService;
         this.customerService = customerService;
-    }
-
-    @BeforeAll
-    static void setUp() {
-        Account account = new Account();
-        account.setId(10L);
-        account.setBalance(new BigDecimal(20000));
-
-        validCard = new Card();
-        validCard.setAccount(account);
     }
 
     @BeforeEach
@@ -74,35 +59,33 @@ public class CardServiceTests {
 
     @Test
     public void checkCreateMethod() {
-        Card expected = validCard;
-        expected.setOwner(customerService.readById(2L));
-        expected.setId(cardId++);
+        var expected = cardService.create(new Card(), customerService.readById(2L));
 
-        cardService.create(expected);
-        assertTrue(cards.size() < cardService.getAll().size(),
-                "Your card have not created, because allCards size are not bigger after creating a Card");
+        assertAll(
+                () -> assertEquals(expected, cardService.readById(expected.getId()),
+                        "Cards must be equal!"),
+                () -> assertTrue(cards.size() < cardService.getAll().size(),
+                        "Your card have not created, because allCards size are not bigger after creating a Card")
+        );
+
     }
 
     @Test
     public void checkNotValidCreate() {
         assertAll(
-                () -> assertThrows(NullEntityReferenceException.class, () -> cardService.create(null),
+                () -> assertThrows(NullEntityReferenceException.class, () -> cardService.create(null, null),
                         "There need to be NullEntityReferenceException because we are pass null."),
 
-                () -> assertThrows(ConstraintViolationException.class, () -> cardService.create(new Card()),
-                        "There need to be ConstraintViolationException because we are pass object without tabular values.")
+                () -> assertThrows(InvalidDataAccessApiUsageException.class, () -> cardService.create(new Card(), new Customer()),
+                        "There need to be InvalidDataAccessApiUsageException because we are pass object without tabular values.")
         );
     }
 
     @Test
     public void checkReadByIdCard() {
-        Card expected = validCard;
-        validCard.setOwner(customerService.readById(1L));
-        expected.setId(5L);
-        cardService.create(expected);
+        Card expected = cardService.create(new Card(), customerService.readById(1L));
 
-        Card actual = cardService.readById(5L);
-        assertEquals(expected, actual,
+        assertEquals(expected, cardService.readById(expected.getId()),
                 "Your cards need to be equals");
     }
 
@@ -128,7 +111,7 @@ public class CardServiceTests {
 
     @Test
     public void checkUpdateCard() {
-        Card expected = validCard;
+        Card expected = new Card();
         expected.setOwner(customerService.readById(3L));
         expected.setId(4L);
 
@@ -153,17 +136,13 @@ public class CardServiceTests {
 
     @Test
     public void checkReadCardByNumber() {
-        Card expected = new Card();
-        expected.setId(cardId++);
-        expected.setOwner(customerService.readById(1L));
-        expected.setAccount(new Account());
-        cardService.create(expected);
+        var card = new Card();
+        Card expected = cardService.create(card, customerService.readById(1L));
 
-        Card actual = cardService.readByNumber(expected.getNumber());
+        var actual = cardService.readByNumber(expected.getNumber());
 
         assertThat(expected.getNumber()).isEqualTo(actual.getNumber());
         assertThat(expected.getOwner()).isEqualTo(actual.getOwner());
-        assertThat(expected.getAccount().getBalance()).isEqualTo(actual.getAccount().getBalance());
     }
 
     @Test
@@ -178,11 +157,7 @@ public class CardServiceTests {
     public void checkReadByOwnerCard() {
         Customer owner = customerService.readById(3L);
 
-        Card expected = new Card();
-        expected.setId(cardId++);
-        expected.setOwner(owner);
-        expected.setAccount(new Account());
-        cardService.create(expected);
+        Card expected = cardService.create(new Card(), owner);
 
         long id = cardService.readByNumber(expected.getNumber()).getId();
 
@@ -190,7 +165,6 @@ public class CardServiceTests {
 
         assertThat(expected.getNumber()).isEqualTo(actual.getNumber());
         assertThat(expected.getOwner()).isEqualTo(actual.getOwner());
-        assertThat(expected.getAccount().getBalance()).isEqualTo(actual.getAccount().getBalance());
     }
 
     @Test

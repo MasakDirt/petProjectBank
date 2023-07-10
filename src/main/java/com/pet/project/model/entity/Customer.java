@@ -39,7 +39,7 @@ public class Customer implements UserDetails {
     private String lastName;
 
     @Pattern(regexp = "[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}", message = "Must be a valid e-mail address")
-    @NotBlank
+    @NotNull
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 

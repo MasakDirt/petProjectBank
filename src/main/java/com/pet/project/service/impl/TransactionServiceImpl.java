@@ -27,12 +27,13 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transaction create(TransactionCreateRequest request, long accountId) {
-        double transferAmount = request.getTransferAmount();
-        if (transferAmount < 0.1) {
-            throw new InvalidAmountException("Sum must be greater than 0.1");
-        }
+        if (request != null) {
+            double transferAmount = request.getTransferAmount();
 
-        try {
+            if (transferAmount < 0.1) {
+                throw new InvalidAmountException("Sum must be greater than 0.1");
+            }
+
             var recipientCard = cardService.readByNumber(request.getCardNumber());
 
             var transaction = createNewTransaction(accountId, transferAmount, recipientCard.getNumber());
@@ -43,9 +44,8 @@ public class TransactionServiceImpl implements TransactionService {
             accountService.update(recipientCard.getAccount());
 
             return transactionRepository.save(transaction);
-        } catch (NullPointerException nullPointerException) {
-            throw new NullEntityReferenceException("Transaction cannot be 'null'");
         }
+        throw new NullEntityReferenceException("Transaction cannot be 'null'");
     }
 
     @Override

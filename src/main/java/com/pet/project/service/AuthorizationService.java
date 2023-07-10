@@ -10,6 +10,10 @@ public class AuthorizationService {
     private final CustomerService customerService;
     private final CardService cardService;
 
+    public boolean isAdmin(String username) {
+        return getCustomer(username).getRole().getName().equals("ADMIN");
+    }
+
     public boolean isUserAdminOrIsUsersSame(String username, long ownerId) {
         return isAdmin(username) || isUsersIdEquals(username, ownerId);
     }
@@ -29,10 +33,6 @@ public class AuthorizationService {
     public boolean isUserAdminOrValidUserAndIsCardOwnerAndIsCardContainsTransaction(String username, long ownerId, long cardId, long transactionId) {
         return isAdmin(username) || (isUserValidUserAndIsCardOwner(username, ownerId, cardId)
                 && isCardContainsTransaction(cardId, transactionId));
-    }
-
-    public boolean isAdmin(String username) {
-        return getCustomer(username).getRole().getName().equals("ADMIN");
     }
 
     private boolean isUsersIdEquals(String currentUsername, long id) {

@@ -68,8 +68,7 @@ public class CustomerServiceTests {
 
     @Test
     public void checkCreateUser() {
-        validCustomer.setRole(roleService.readById(2L));
-        customerService.create(validCustomer);
+        customerService.create(validCustomer, roleService.readById(2L));
 
         assertTrue(customers.size() < customerService.getAll().size(),
                 "Please, check why your service don`t create customer.");
@@ -78,17 +77,17 @@ public class CustomerServiceTests {
     @Test
     public void checkNotValidUserCreate() {
         assertAll(
-                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.create(null),
+                () -> assertThrows(NullEntityReferenceException.class, () -> customerService.create(null, roleService.readById(2L)),
                         "There need to be NullEntityReferenceException because we are pass null."),
 
-                () -> assertThrows(IllegalArgumentException.class, () -> customerService.create(new Customer()),
+                () -> assertThrows(IllegalArgumentException.class, () -> customerService.create(new Customer(), roleService.readById(2L)),
                         "There need to be ConstraintViolationException because we are pass object without tabular values.")
         );
     }
 
     @Test
     public void checkReadByIdUser() {
-        validCustomer = customerService.create(validCustomer);
+        validCustomer = customerService.create(validCustomer, roleService.readById(2L));
         Customer actual = customerService.readById(validCustomer.getId());
 
         assertEquals(validCustomer, actual, "They need to be equals, please check there`s id.");
@@ -142,7 +141,7 @@ public class CustomerServiceTests {
 
     @Test
     public void checkFindByEmailUser() {
-        customerService.create(validCustomer);
+        customerService.create(validCustomer, roleService.readById(2L));
         Customer actual = customerService.loadUserByUsername(validCustomer.getEmail());
 
         assertThat(validCustomer.getEmail()).isEqualTo(actual.getEmail());

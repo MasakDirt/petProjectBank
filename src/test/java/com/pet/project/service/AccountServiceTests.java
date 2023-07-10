@@ -63,20 +63,21 @@ public class AccountServiceTests {
 
     @Test
     public void checkAccountCreate() {
-        Account account = new Account();
-        account.setId(100L);
-        account.setBalance(new BigDecimal(20000));
-        account.setTransactions(List.of(new Transaction(), new Transaction()));
-        account.setCard(cardService.readById(2L));
-        accountService.create(account);
+        Account account = accountService.create(cardService.readById(2L), customerService.readById(2L));
 
-        assertTrue(accounts.size() < accountService.getAll().size(),
-                "Account not create, please check why.");
+        assertAll(
+                () -> assertEquals(account, accountService.readById(account.getId()),
+                        "Accounts must be equal!"),
+
+                () -> assertTrue(accounts.size() < accountService.getAll().size(),
+                        "Account not create, please check why.")
+        );
     }
 
     @Test
     public void checkNotValidAccountCreating() {
-        assertThrows(NullEntityReferenceException.class, () -> accountService.create(null));
+        assertThrows(NullEntityReferenceException.class, () -> accountService.create(null, null),
+                "There need to be NullEntityReferenceException because we are pass null.");
     }
 
     @Test
@@ -85,9 +86,9 @@ public class AccountServiceTests {
         BigDecimal balanceBefore = expected.getBalance();
 
         double sum = 200000;
-        accountService.replenishBalance(3L, sum);
+        accountService.replenishBalance(expected.getId(), sum);
 
-        Account actual = accountService.readById(3L);
+        Account actual = accountService.readById(expected.getId());
 
         assertThat(actual.getBalance()).isNotEqualTo(balanceBefore);
         assertThat(actual.getBalance())
