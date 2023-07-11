@@ -9,7 +9,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Properties;
 
 @SpringBootApplication
 @AllArgsConstructor
@@ -22,13 +28,52 @@ public class MyBankStarter implements CommandLineRunner {
     private final RoleService roleService;
     private final TransactionService transactionService;
 
+    private static void writeInPropertiesFile() {
+        String username = System.getenv("username");
+        String password = System.getenv("password");
+        String propertiesFilePath = "src/main/resources/application.properties";
+
+        if (username == null || password == null) {
+            log.warn("You need to write your username and password in Environment Variables!");
+            return;
+        }
+
+        inputAndOutputInProperties(username, password, propertiesFilePath);
+    }
+
+    private static void inputAndOutputInProperties(String username, String password, String propertiesFilePath) {
+        Properties properties = new Properties();
+        try {
+            FileInputStream input = new FileInputStream(propertiesFilePath);
+            properties.load(input);
+            input.close();
+
+            properties.setProperty("spring.datasource.username", username);
+            properties.setProperty("spring.datasource.password", password);
+            properties.setProperty("spring.datasource.url", "jdbc:mysql://localhost:3306/myBank");
+
+            FileOutputStream output = new FileOutputStream(propertiesFilePath);
+            OutputStreamWriter writer = new OutputStreamWriter(output, StandardCharsets.UTF_8);
+            properties.store(writer, null);
+
+            writer.flush();
+            writer.close();
+
+            log.info("Username and password was successfully written in file application.properties.");
+        } catch (IOException io) {
+            log.error("Error: writing in property file {}", io.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
+        writeInPropertiesFile();
         SpringApplication.run(MyBankStarter.class, args);
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String[] args) {
         log.info("Running Spring Boot Application");
+
         Role admin = new Role();
         admin.setName("ADMIN");
 
@@ -45,7 +90,6 @@ public class MyBankStarter implements CommandLineRunner {
         creatingSecondUser(user);
         creatingThirdUser(user);
     }
-
 
     private void creatingFirstUser(Role role) {
         Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "1111", role);
