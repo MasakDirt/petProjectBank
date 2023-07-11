@@ -1,7 +1,7 @@
 package com.pet.project.config;
 
 import com.pet.project.filter.AuthTokenFilter;
-import com.pet.project.utils.AuthEntryPointJwt;
+import com.pet.project.component.AuthEntryPointJwt;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
