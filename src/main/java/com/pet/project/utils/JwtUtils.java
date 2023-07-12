@@ -12,7 +12,7 @@ import java.util.Date;
 @Slf4j
 @Component
 public class JwtUtils {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     @Value("${myJwtToken.app.jwtExpirationMs}")
     private int jwtExpirationMs;
