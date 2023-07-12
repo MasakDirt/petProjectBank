@@ -40,9 +40,6 @@ public class TransactionServiceImpl implements TransactionService {
 
             addedAndSubtractBalances(transaction, recipientCard, transferAmount);
 
-            accountService.update(transaction.getAccount());
-            accountService.update(recipientCard.getAccount());
-
             return transactionRepository.save(transaction);
         }
         throw new NullEntityReferenceException("Transaction cannot be 'null'");
@@ -90,18 +87,21 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private void addedAndSubtractBalances(Transaction transaction, Card recipientCard, double transferAmount) {
+        var account = transaction.getAccount();
+
         transaction.setBalanceAfter(
-                transaction.getAccount().getBalance().subtract(new BigDecimal(transferAmount))
+               account.getBalance().subtract(new BigDecimal(transferAmount))
         );
 
-        transaction.getAccount().setBalance(transaction.getBalanceAfter());
+        account.setBalance(transaction.getBalanceAfter());
 
         recipientCard.getAccount().setBalance(
                 recipientCard.getAccount().getBalance().add(new BigDecimal(transferAmount))
         );
 
-        double fundsWithdrawn = transferAmount - (transferAmount * 2);
+        transaction.setFundsWithdrawn(new BigDecimal("-" + transferAmount));
 
-        transaction.setFundsWithdrawn(new BigDecimal(fundsWithdrawn));
+        accountService.update(account);
+        accountService.update(recipientCard.getAccount());
     }
 }
