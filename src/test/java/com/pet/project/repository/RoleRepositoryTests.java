@@ -30,13 +30,12 @@ public class RoleRepositoryTests {
 
     @Test
     public void checkFindByNameRole() {
-        Role expected = new Role();
-        expected.setId(6L);
-        expected.setName("Experiment");
-        roleRepository.save(expected);
+        Role role = new Role();
+        role.setName("Experiment");
+        Role expected = roleRepository.save(role);
 
         Role actual = roleRepository.findByName("Experiment").orElseThrow(
-                () -> new NoSuchElementException("We can not find role with name: " + expected.getName()));
+                () -> new NoSuchElementException("We can not find role with name: " + role.getName()));
 
         assertEquals(expected, actual, "Here roles need to be equals");
     }
