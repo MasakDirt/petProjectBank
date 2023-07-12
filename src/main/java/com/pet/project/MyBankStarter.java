@@ -12,14 +12,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 
-@SpringBootApplication
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
+@SpringBootApplication
 public class MyBankStarter implements CommandLineRunner {
 
     private final CustomerService customerService;
@@ -53,11 +51,10 @@ public class MyBankStarter implements CommandLineRunner {
             properties.setProperty("spring.datasource.url", "jdbc:mysql://localhost:3306/myBank");
 
             FileOutputStream output = new FileOutputStream(propertiesFilePath);
-            OutputStreamWriter writer = new OutputStreamWriter(output, StandardCharsets.UTF_8);
-            properties.store(writer, null);
+            properties.store(output, null);
 
-            writer.flush();
-            writer.close();
+            output.flush();
+            output.close();
 
             log.info("Username and password was successfully written in file application.properties.");
         } catch (IOException io) {
@@ -100,8 +97,6 @@ public class MyBankStarter implements CommandLineRunner {
         Card secondCard = createCard(userAdmin);
         Account accountSecond = secondCard.getAccount();
         accountSecond = replenishBalance(accountSecond, 7000);
-        firstCard = accountFirst.getCard();
-        secondCard = accountSecond.getCard();
 
         List<Card> cards = List.of(firstCard, secondCard);
 
@@ -114,9 +109,6 @@ public class MyBankStarter implements CommandLineRunner {
 
         accountFirst.setTransactions(List.of(transaction1, transaction2));
         accountSecond.setTransactions(List.of(transaction3, transaction4));
-
-        accountService.update(accountFirst);
-        accountService.update(accountSecond);
     }
 
     private void creatingSecondUser(Role role) {
@@ -141,8 +133,6 @@ public class MyBankStarter implements CommandLineRunner {
         accountSecond.setTransactions(List.of(transaction7));
         accountFirst.setTransactions(List.of(transaction5, transaction6));
 
-        accountService.update(accountFirst);
-        accountService.update(accountSecond);
     }
 
     private void creatingThirdUser(Role role) {
@@ -163,7 +153,6 @@ public class MyBankStarter implements CommandLineRunner {
         Transaction transaction10 = createTransaction(recepientCard.getNumber(), account, 6789);
 
         account.setTransactions(List.of(transaction8, transaction9, transaction10));
-        accountService.update(account);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
