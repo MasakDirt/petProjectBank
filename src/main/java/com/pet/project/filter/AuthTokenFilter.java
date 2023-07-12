@@ -45,12 +45,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private void setAuthenticationContext(String token, HttpServletRequest httpRequest) {
-        UserDetails userDetails = getUserDetails(token);
         UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
-                null, userDetails.getAuthorities());
+                authentication = geUsernamePasswordAuthenticationToken(token);
+
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private UsernamePasswordAuthenticationToken geUsernamePasswordAuthenticationToken(String token) {
+        var userDetails = getUserDetails(token);
+        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(),
+                null, userDetails.getAuthorities());
     }
 
     private UserDetails getUserDetails(String token) {
