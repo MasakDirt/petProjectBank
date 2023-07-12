@@ -176,9 +176,9 @@ public class MyBankStarter implements CommandLineRunner {
     private Transaction createTransaction(String recipientCard, Account account, double transferAmount) {
         TransactionCreateRequest request = new TransactionCreateRequest(recipientCard, transferAmount);
 
-        var transac = transactionService.create(request, account.getId());
+        var transaction = transactionService.create(request, account.getId());
         log.info("Transaction === for card number {} === was created.", account.getCard().getNumber());
-        return transac;
+        return transaction;
     }
 
     private Account replenishBalance(Account account, double sum) {
