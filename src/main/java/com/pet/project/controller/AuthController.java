@@ -1,7 +1,6 @@
 package com.pet.project.controller;
 
 import com.pet.project.model.dto.auth.LoginRequest;
-import com.pet.project.model.dto.auth.TokenResponse;
 import com.pet.project.model.dto.customer.CustomerCreateRequest;
 import com.pet.project.model.dto.customer.CustomerMapper;
 import com.pet.project.model.dto.customer.CustomerResponse;
@@ -30,7 +29,7 @@ public class AuthController {
     private final CustomerMapper mapper;
 
     @PostMapping("/login")
-    public TokenResponse login(@RequestBody @Valid LoginRequest request) {
+    public String login(@RequestBody @Valid LoginRequest request) {
         var userDetails = customerService.loadUserByUsername(request.getUsername());
 
         if (!passwordEncoder.matches(request.getPassword(), userDetails.getPassword())) {
@@ -38,7 +37,7 @@ public class AuthController {
         }
 
         log.info("=== POST-LOGIN/login-post === auth.name = {} === time = {}", userDetails.getUsername(), LocalDateTime.now());
-        return new TokenResponse(jwtUtils.generateTokenFromUsername(userDetails.getUsername()));
+        return jwtUtils.generateTokenFromUsername(userDetails.getUsername());
     }
 
     @PostMapping("/register")
