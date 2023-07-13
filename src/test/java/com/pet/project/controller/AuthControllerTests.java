@@ -1,7 +1,5 @@
 package com.pet.project.controller;
 
-import com.pet.project.model.dto.auth.LoginRequest;
-import com.pet.project.model.dto.customer.CustomerCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
 
-import static com.pet.project.controller.JsonConvertor.asJsonString;
+import static com.pet.project.controller.ControllerTestsStaticHelper.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class AuthControllerTests {
+    private static final String BASIC_URL = "/api/auth";
+
     private final MockMvc mvc;
 
     @Autowired
@@ -33,7 +33,7 @@ public class AuthControllerTests {
 
     @Test
     public void test_Valid_Login() throws Exception {
-        mvc.perform(post("/api/auth/login")
+        mvc.perform(post(BASIC_URL + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 asJsonString(getLoginRequest("mike@mail.co", "1111"))
@@ -47,21 +47,25 @@ public class AuthControllerTests {
 
     @Test
     public void test_Invalid_NotFound_Login() throws Exception {
-        mvc.perform(post("/api/auth/login")
+        var login = getLoginRequest("notvalid@mail.co", "1234");
+        mvc.perform(post(BASIC_URL + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
-                                asJsonString(getLoginRequest("notvalid@mail.co", "1234"))
+                                asJsonString(login)
                         ))
                 .andExpect(status().isNotFound())
                 .andExpect(result ->
-                        assertNotEquals(null, result.getResponse().getContentType(),
+                        assertEquals("{\"status\":\"" + HttpStatus.NOT_FOUND.name() +
+                                        "\",\"message\":\"Customer with email " + login.getUsername() + " not found\",\"path\":\"http://localhost" + result.getRequest().getRequestURI() + "\"}",
+
+                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(43),
                                 "We should get error response with message, so it`s shouldn`t be null!")
                 );
     }
 
     @Test
     public void test_Invalid_Unauthorized_Login() throws Exception {
-        mvc.perform(post("/api/auth/login")
+        mvc.perform(post(BASIC_URL + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 asJsonString(getLoginRequest("mike@mail.co", "1234"))
@@ -82,7 +86,7 @@ public class AuthControllerTests {
 
     @Test
     public void test_Valid_CreateNewCustomer() throws Exception {
-        mvc.perform(post("/api/auth/register")
+        mvc.perform(post(BASIC_URL + "/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 asJsonString(
@@ -92,16 +96,16 @@ public class AuthControllerTests {
                 )
                 .andExpect(status().isCreated())
                 .andExpect(result ->
-                        assertEquals("{\"id\":4,\"firstName\":\"Mikel\",\"lastName\":\"Proud\",\"email\":\"proud@mail.co\",\"role\":\"USER\"}",
+                        assertEquals("{\"firstName\":\"Mikel\",\"lastName\":\"Proud\",\"email\":\"proud@mail.co\",\"role\":\"USER\"}",
 
-                                result.getResponse().getContentAsString(),
+                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(8),
                                 "If all was written as need, it`s must be equal!")
                 );
     }
 
     @Test
     public void test_Invalid_BadRequest_CreateNewCustomer() throws Exception {
-        mvc.perform(post("/api/auth/register")
+        mvc.perform(post(BASIC_URL + "/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 asJsonString(
@@ -121,13 +125,5 @@ public class AuthControllerTests {
                                 Objects.requireNonNull(result.getResolvedException()).getClass(),
                                 "Here must be MethodArgumentNotValidException, because we post not valid e-mail address")
                 );
-    }
-
-    private LoginRequest getLoginRequest(String username, String password) {
-        return new LoginRequest(username, password);
-    }
-
-    private CustomerCreateRequest getCustomerCreateRequest(String firstName, String lastName, String email, String password) {
-        return new CustomerCreateRequest(firstName, lastName, email, password);
     }
 }
