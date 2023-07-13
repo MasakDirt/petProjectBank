@@ -159,10 +159,11 @@ public class TransactionServiceTests {
 
     @Test
     public void checkDeleteTransaction() {
+        int beforeDeleting = transactionService.getAll().size();
         transactionService.delete(2L);
 
-        assertTrue(transactions.size() > transactionService.getAll().size(),
-                "Transactions size must be smaller than transactionService.getAll() size after deleting role");
+        assertTrue(beforeDeleting > transactionService.getAll().size(),
+                "Transactions size must be smaller than transactionService.getAll() size after deleting transaction");
     }
 
     private Transaction createTransaction() {
