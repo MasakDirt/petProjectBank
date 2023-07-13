@@ -27,7 +27,7 @@ public class Role implements GrantedAuthority {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Customer> customers;
 
     @Override

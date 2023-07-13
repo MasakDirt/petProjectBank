@@ -9,11 +9,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
-@SpringBootApplication
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
+@SpringBootApplication
 public class MyBankStarter implements CommandLineRunner {
 
     private final CustomerService customerService;
@@ -22,13 +26,51 @@ public class MyBankStarter implements CommandLineRunner {
     private final RoleService roleService;
     private final TransactionService transactionService;
 
+    private static void writeInPropertiesFile() {
+        String username = System.getenv("username");
+        String password = System.getenv("password");
+        String propertiesFilePath = "src/main/resources/application.properties";
+
+        if (username == null || password == null) {
+            log.warn("You need to write your username and password in Environment Variables!");
+            return;
+        }
+
+        inputAndOutputInProperties(username, password, propertiesFilePath);
+    }
+
+    private static void inputAndOutputInProperties(String username, String password, String propertiesFilePath) {
+        Properties properties = new Properties();
+        try {
+            FileInputStream input = new FileInputStream(propertiesFilePath);
+            properties.load(input);
+            input.close();
+
+            properties.setProperty("spring.datasource.username", username);
+            properties.setProperty("spring.datasource.password", password);
+            properties.setProperty("spring.datasource.url", "jdbc:mysql://localhost:3306/myBank");
+
+            FileOutputStream output = new FileOutputStream(propertiesFilePath);
+            properties.store(output, null);
+
+            output.flush();
+            output.close();
+
+            log.info("Username and password was successfully written in file application.properties.");
+        } catch (IOException io) {
+            log.error("Error: writing in property file {}", io.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
+        writeInPropertiesFile();
         SpringApplication.run(MyBankStarter.class, args);
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String[] args) {
         log.info("Running Spring Boot Application");
+
         Role admin = new Role();
         admin.setName("ADMIN");
 
@@ -46,7 +88,6 @@ public class MyBankStarter implements CommandLineRunner {
         creatingThirdUser(user);
     }
 
-
     private void creatingFirstUser(Role role) {
         Customer userAdmin = createCustomer("Mike", "Nicky", "mike@mail.co", "1111", role);
 
@@ -56,8 +97,6 @@ public class MyBankStarter implements CommandLineRunner {
         Card secondCard = createCard(userAdmin);
         Account accountSecond = secondCard.getAccount();
         accountSecond = replenishBalance(accountSecond, 7000);
-        firstCard = accountFirst.getCard();
-        secondCard = accountSecond.getCard();
 
         List<Card> cards = List.of(firstCard, secondCard);
 
@@ -70,9 +109,6 @@ public class MyBankStarter implements CommandLineRunner {
 
         accountFirst.setTransactions(List.of(transaction1, transaction2));
         accountSecond.setTransactions(List.of(transaction3, transaction4));
-
-        accountService.update(accountFirst);
-        accountService.update(accountSecond);
     }
 
     private void creatingSecondUser(Role role) {
@@ -97,8 +133,6 @@ public class MyBankStarter implements CommandLineRunner {
         accountSecond.setTransactions(List.of(transaction7));
         accountFirst.setTransactions(List.of(transaction5, transaction6));
 
-        accountService.update(accountFirst);
-        accountService.update(accountSecond);
     }
 
     private void creatingThirdUser(Role role) {
@@ -119,7 +153,6 @@ public class MyBankStarter implements CommandLineRunner {
         Transaction transaction10 = createTransaction(recepientCard.getNumber(), account, 6789);
 
         account.setTransactions(List.of(transaction8, transaction9, transaction10));
-        accountService.update(account);
     }
 
     private Customer createCustomer(String firstName, String lastName, String email, String password, Role role) {
@@ -143,9 +176,9 @@ public class MyBankStarter implements CommandLineRunner {
     private Transaction createTransaction(String recipientCard, Account account, double transferAmount) {
         TransactionCreateRequest request = new TransactionCreateRequest(recipientCard, transferAmount);
 
-        var transac = transactionService.create(request, account.getId());
+        var transaction = transactionService.create(request, account.getId());
         log.info("Transaction === for card number {} === was created.", account.getCard().getNumber());
-        return transac;
+        return transaction;
     }
 
     private Account replenishBalance(Account account, double sum) {
