@@ -37,7 +37,6 @@ public class CustomerServiceTests {
     @BeforeAll
     static void setUp() {
         validCustomer = new Customer();
-        validCustomer.setId(5L);
         validCustomer.setFirstName("Lila");
         validCustomer.setLastName("Novus");
         validCustomer.setEmail("novlila@mail.co");
@@ -68,9 +67,10 @@ public class CustomerServiceTests {
 
     @Test
     public void checkCreateUser() {
+        int sizeCustomersBefore = customerService.getAll().size();
         customerService.create(validCustomer, roleService.readById(2L));
 
-        assertTrue(customers.size() < customerService.getAll().size(),
+        assertTrue(sizeCustomersBefore < customerService.getAll().size(),
                 "Please, check why your service don`t create customer.");
     }
 
