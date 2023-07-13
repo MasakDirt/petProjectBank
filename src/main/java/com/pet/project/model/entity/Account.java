@@ -1,5 +1,6 @@
 package com.pet.project.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,10 +24,11 @@ public class Account {
     @DecimalMin(value = "0", message = "Account cannot be less than 0")
     private BigDecimal balance;
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
     private Card card;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Transaction> transactions;
 
     public Account() {

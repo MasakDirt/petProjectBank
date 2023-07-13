@@ -1,5 +1,7 @@
 package com.pet.project.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,10 +50,12 @@ public class Customer implements UserDetails {
     private String password;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Card> myCards;
 
     public String getName() {
