@@ -45,7 +45,7 @@ public class CardController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
-    CardResponse getCardById(@PathVariable("owner-id") long ownerId, @PathVariable long id, Authentication authentication) {
+    CardResponse getCardById(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, Authentication authentication) {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readByOwner(customerService.readById(ownerId), id);
 

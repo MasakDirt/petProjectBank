@@ -100,7 +100,7 @@ public class CardServiceTests {
         cardService.delete(3L);
 
         assertTrue(cards.size() > cardService.getAll().size(),
-                "There cards collection need to be bigger than get all, because of deleting one user from db.");
+                "There cards collection need to be bigger than get all, because of deleting one card from db.");
     }
 
     @Test
