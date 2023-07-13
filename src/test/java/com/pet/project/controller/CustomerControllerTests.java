@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.pet.project.controller.ControllerTestsStaticHelper.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,8 +41,17 @@ public class CustomerControllerTests {
         this.roleService = roleService;
     }
 
+    @Test
+    void injectedComponentsAreNotNull() {
+        assertThat(mvc).isNotNull();
+        assertThat(customerService).isNotNull();
+        assertThat(mapper).isNotNull();
+        assertThat(roleService).isNotNull();
+    }
+
     @BeforeEach
     void init() throws Exception {
+        // ADMIN
         token = mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -69,6 +79,7 @@ public class CustomerControllerTests {
 
     @Test
     public void test_Invalid_UserRole_GetAll() throws Exception {
+        // USER
         token = mvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -203,7 +214,7 @@ public class CustomerControllerTests {
     }
 
     @Test
-    public void test_Invalid_DeleteCustomer() throws Exception {
+    public void test_Invalid_CustomerId_DeleteCustomer() throws Exception {
         mvc.perform(delete(BASIC_URL + "/{id}", 100L)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isNotFound())
