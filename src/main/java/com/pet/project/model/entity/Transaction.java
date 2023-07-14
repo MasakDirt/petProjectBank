@@ -1,5 +1,6 @@
 package com.pet.project.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,6 +26,7 @@ public class Transaction {
     private LocalDateTime doneAt;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "account_id")
     private Account account;
 
