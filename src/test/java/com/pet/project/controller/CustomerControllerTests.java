@@ -14,6 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
+
+import org.springframework.security.access.AccessDeniedException;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.Objects;
 
 import static com.pet.project.controller.ControllerTestsStaticHelper.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -69,7 +75,7 @@ public class CustomerControllerTests {
 
         mvc.perform(get(BASIC_URL)
                         .header("Authorization", "Bearer " + token)
-                   )
+                )
                 .andExpect(status().isOk())
                 .andExpect(result ->
                         assertEquals(expected, result.getResponse().getContentAsString(),
@@ -90,11 +96,15 @@ public class CustomerControllerTests {
 
         mvc.perform(get(BASIC_URL)
                         .header("Authorization", "Bearer " + token)
-                        )
+                )
                 .andExpect(status().isForbidden())
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem!")
+                )
+                .andExpect(result ->
+                        assertEquals(AccessDeniedException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be AccessDeniedException because we try to authorize and get all customers by user, it`s denied!")
                 );
     }
 
@@ -153,7 +163,7 @@ public class CustomerControllerTests {
                         assertEquals(asJsonString(mapper.customerToCustomerResponse(customer)),
                                 result.getResponse().getContentAsString(),
                                 "Customers must be equal after updating!")
-                        );
+                );
     }
 
     @Test
@@ -170,6 +180,10 @@ public class CustomerControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem!")
+                )
+                .andExpect(result ->
+                        assertEquals(ResponseStatusException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be ResponseStatusException because we entered invalid password!")
                 );
     }
 
@@ -186,6 +200,10 @@ public class CustomerControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem!")
+                )
+                .andExpect(result ->
+                        assertEquals(AccessDeniedException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be AccessDeniedException because we try to update customers with not equal id!")
                 );
     }
 
@@ -221,6 +239,10 @@ public class CustomerControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem!")
-                        );
+                )
+                .andExpect(result ->
+                        assertEquals(EntityNotFoundException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be EntityNotFoundException because we pass not valid card id: 100!")
+                );
     }
 }

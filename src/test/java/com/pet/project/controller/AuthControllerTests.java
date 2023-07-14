@@ -58,7 +58,7 @@ public class AuthControllerTests {
                         assertEquals("{\"status\":\"" + HttpStatus.NOT_FOUND.name() +
                                         "\",\"message\":\"Customer with email " + login.getUsername() + " not found\",\"path\":\"http://localhost" + result.getRequest().getRequestURI() + "\"}",
 
-                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(43),
+                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(35),
                                 "We should get error response with message, so it`s shouldn`t be null!")
                 );
     }
@@ -75,7 +75,7 @@ public class AuthControllerTests {
                         assertEquals("{\"status\":\"" + HttpStatus.UNAUTHORIZED.name() +
                                         "\",\"message\":\"Wrong password\",\"path\":\"http://localhost" + result.getRequest().getRequestURI() + "\"}",
 
-                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(43),
+                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(35),
                                 "We should get error response with message, so it`s shouldn`t be null!")
                 ).andExpect(result ->
                         assertEquals(ResponseStatusException.class,
@@ -97,7 +97,6 @@ public class AuthControllerTests {
                 .andExpect(status().isCreated())
                 .andExpect(result ->
                         assertEquals("{\"firstName\":\"Mikel\",\"lastName\":\"Proud\",\"email\":\"proud@mail.co\",\"role\":\"USER\"}",
-
                                 result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(8),
                                 "If all was written as need, it`s must be equal!")
                 );
@@ -118,7 +117,7 @@ public class AuthControllerTests {
                         assertEquals("{\"status\":\"" + HttpStatus.BAD_REQUEST.name() +
                                         "\",\"message\":\"Must be a valid e-mail address\",\"path\":\"http://localhost" + result.getRequest().getRequestURI() + "\"}",
 
-                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(43),
+                                result.getResponse().getContentAsString().charAt(0) + result.getResponse().getContentAsString().substring(35),
                                 "Here must be message about exception, because we write not valid e-mail address!")
                 ).andExpect(result ->
                         assertEquals(org.springframework.web.bind.MethodArgumentNotValidException.class,

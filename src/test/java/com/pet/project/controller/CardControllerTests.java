@@ -5,6 +5,7 @@ import com.pet.project.model.dto.card.CardBalanceUpdateRequest;
 import com.pet.project.model.dto.card.CardMapper;
 import com.pet.project.service.CardService;
 import com.pet.project.service.CustomerService;
+import com.pet.project.exception.InvalidAmountException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.pet.project.controller.ControllerTestsStaticHelper.asJsonString;
@@ -109,6 +112,10 @@ public class CardControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem that it is not his card!")
+                )
+                .andExpect(result ->
+                        assertEquals(EntityNotFoundException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be EntityNotFoundException because we pass not valid card owner!")
                 );
     }
 
@@ -135,6 +142,10 @@ public class CardControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem that owner not found!")
+                )
+                .andExpect(result ->
+                        assertEquals(EntityNotFoundException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be EntityNotFoundException because we cannot found owner with id 100")
                 );
     }
 
@@ -183,6 +194,10 @@ public class CardControllerTests {
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "Here must be a response about problem that sum must be greater!")
+                )
+                .andExpect(result ->
+                        assertEquals(InvalidAmountException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
+                                "Here must be InvalidAmountException because we pass invalid sum to the our balance!")
                 );
     }
 
@@ -205,6 +220,6 @@ public class CardControllerTests {
         int after = cardService.getAllByOwner(owner).size();
 
         assertNotEquals(cardsBeforeDeleting, after,
-                "");
+                "Amount of cards before deleting must be bigger than after deleting");
     }
 }
