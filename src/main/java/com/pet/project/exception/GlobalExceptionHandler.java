@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,6 +66,7 @@ public class GlobalExceptionHandler {
         log.error("Exception raised = {} :: URL = {}", message, request.getRequestURL());
         return ResponseEntity.status(httpStatus)
                 .body(new ErrorResponse(
+                                LocalDateTime.now(),
                                 httpStatus,
                                 message,
                                 request.getRequestURL().toString()
