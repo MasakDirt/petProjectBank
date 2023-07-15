@@ -51,10 +51,11 @@ public class TransactionServiceTests {
         assertThat(transactionService).isNotNull();
         assertThat(cardService).isNotNull();
         assertThat(accountService).isNotNull();
+        assertThat(transactions).isNotNull();
     }
 
     @Test
-    public void checkGetAll() {
+    public void test_GetAll() {
         assertAll(
                 () -> assertTrue(transactionService.getAll().size() > 0,
                         "There must be more than 0 transaction."),
@@ -65,7 +66,7 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkCreateTransaction() {
+    public void test_CreateTransaction() {
         Card recipient = cardService.readById(3L);
         Account account = accountService.readById(4L);
 
@@ -93,7 +94,7 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkNotValidCreateTransaction() {
+    public void test_NotValid_CreateTransaction() {
 
         Transaction transaction = createTransaction();
         transaction.setId(11L);
@@ -117,7 +118,7 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkReadByIdTransaction() {
+    public void test_ReadByIdTransaction() {
         var expected = transactionService.create(new TransactionCreateRequest(cardService.readById(3L).getNumber(), 150), 3L);
 
         assertEquals(expected, transactionService.readById(expected.getId()),
@@ -125,13 +126,13 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkInvalidReadByIdTransaction() {
+    public void test_Invalid_ReadByIdTransaction() {
         assertThrows(EntityNotFoundException.class, () -> transactionService.readById(10000L),
                 "There must be EntityNotFoundException because we have not transaction with id 10000");
     }
 
     @Test
-    public void checkUpdateTransaction() {
+    public void test_UpdateTransaction() {
         Transaction expected = createTransaction();
         expected.setId(9L);
 
@@ -142,7 +143,7 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkInvalidUpdateTransaction() {
+    public void test_Invalid_UpdateTransaction() {
         Transaction invalidTransaction = new Transaction();
         invalidTransaction.setId(140000L);
         assertAll(
@@ -158,7 +159,7 @@ public class TransactionServiceTests {
     }
 
     @Test
-    public void checkDeleteTransaction() {
+    public void test_DeleteTransaction() {
         int beforeDeleting = transactionService.getAll().size();
         transactionService.delete(8L);
 

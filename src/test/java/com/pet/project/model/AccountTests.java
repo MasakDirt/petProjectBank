@@ -37,24 +37,24 @@ public class AccountTests {
         validAccount = new Account();
         validAccount.setId(1);
         validAccount.setBalance(new BigDecimal(10000));
-        validAccount.setTransactions(List.of(first,second,third));
+        validAccount.setTransactions(List.of(first, second, third));
     }
 
     @Test
-    public void checkValidAccount() {
+    public void test_Valid_Account() {
         Set<ConstraintViolation<Account>> violations = getViolations(validAccount);
         assertEquals(0, violations.size());
     }
 
     @Test
-    public void checkIfDontSetAccount() {
+    public void test_IfDontSetAccount() {
         Account account = new Account();
         assertEquals(BigDecimal.ZERO, account.getBalance());
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidAccount")
-    public void checkInvalidAccount(BigDecimal input, BigDecimal error) {
+    public void test_Invalid_Account(BigDecimal input, BigDecimal error) {
         Account wrongAccount = new Account();
         wrongAccount.setId(2);
         wrongAccount.setBalance(input);
@@ -75,7 +75,7 @@ public class AccountTests {
     }
 
     @Test
-    public void checkZeroAccount(){
+    public void test_Zero_Account() {
         Account actual = new Account();
         actual.setId(3);
         actual.setBalance(BigDecimal.valueOf(0));

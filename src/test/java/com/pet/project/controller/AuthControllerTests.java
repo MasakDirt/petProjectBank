@@ -37,10 +37,11 @@ public class AuthControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 asJsonString(getLoginRequest("mike@mail.co", "1111"))
-                        ))
+                        )
+                )
                 .andExpect(status().isOk())
                 .andExpect(result ->
-                        assertNotEquals(null, result.getResponse(),
+                        assertNotEquals(null, result.getResponse().getContentAsString(),
                                 "We should get in response token, so it`s shouldn`t be null!")
                 );
     }

@@ -80,6 +80,7 @@ public class TransactionControllerTests {
         assertThat(customerService).isNotNull();
         assertThat(cardService).isNotNull();
         assertThat(mapper).isNotNull();
+        assertThat(BASIC_URL).isEqualTo("/api/customers/{owner-id}/cards/{card-id}/transactions");
     }
 
     @Test

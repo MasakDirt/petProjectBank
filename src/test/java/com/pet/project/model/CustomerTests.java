@@ -31,7 +31,6 @@ public class CustomerTests {
         validCustomer.setLastName("Valid");
         validCustomer.setId(1);
         validCustomer.setPassword("pres1234");
-        getViolations(validCustomer);
     }
 
     @Test
@@ -42,7 +41,7 @@ public class CustomerTests {
 
     @ParameterizedTest
     @MethodSource("provideInvalidCustomerName")
-    public void checkInvalidsCustomerNames(String input, String errorValue) {
+    public void test_Invalid_CustomerNames(String input, String errorValue) {
         Customer wrongCustomer = new Customer();
         wrongCustomer.setFirstName(input);
         wrongCustomer.setLastName("Valid");
@@ -69,7 +68,7 @@ public class CustomerTests {
 
     @ParameterizedTest
     @MethodSource("provideInvalidCustomerEmail")
-    public void checkInvalidEmail(String input, String errorValue) {
+    public void test_Invalid_Email(String input, String errorValue) {
         Customer wrongCustomer = new Customer();
         wrongCustomer.setFirstName("Bob");
         wrongCustomer.setLastName("Marlin");
@@ -96,7 +95,7 @@ public class CustomerTests {
 
     @ParameterizedTest
     @MethodSource("provideInvalidCustomerPassword")
-    public void checkInvalidPassword(String input, String errorValue) {
+    public void test_Invalid_Password(String input, String errorValue) {
         Customer wrongCustomer = new Customer();
         wrongCustomer.setFirstName("Nick");
         wrongCustomer.setLastName("Green");

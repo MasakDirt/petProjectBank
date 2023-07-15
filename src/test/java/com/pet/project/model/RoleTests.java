@@ -27,14 +27,14 @@ public class RoleTests {
     }
 
     @Test
-    public void checkValidRole() {
+    public void test_Valid_Role() {
         Set<ConstraintViolation<Role>> violations = getViolations(validRole);
         assertEquals(0, violations.size());
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidRoleName")
-    public void checkInvalidRoleName(String name, String error) {
+    public void test_Invalid_RoleName(String name, String error) {
         Role role = new Role();
         role.setName(name);
 

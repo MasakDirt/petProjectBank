@@ -29,7 +29,7 @@ public class RoleRepositoryTests {
     }
 
     @Test
-    public void checkFindByNameRole() {
+    public void test_FindByNameRole() {
         Role role = new Role();
         role.setName("Experiment");
         Role expected = roleRepository.save(role);
