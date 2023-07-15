@@ -53,6 +53,7 @@ public class CustomerControllerTests {
         assertThat(customerService).isNotNull();
         assertThat(mapper).isNotNull();
         assertThat(roleService).isNotNull();
+        assertThat(BASIC_URL).isEqualTo("/api/customers");
     }
 
     @BeforeEach
@@ -100,7 +101,7 @@ public class CustomerControllerTests {
                 .andExpect(status().isForbidden())
                 .andExpect(result ->
                         assertNotEquals(null, result.getResponse().getContentAsString(),
-                                "Here must be a response about problem!")
+                                "Here must be a response about problem that user has no access!")
                 )
                 .andExpect(result ->
                         assertEquals(AccessDeniedException.class, Objects.requireNonNull(result.getResolvedException()).getClass(),
