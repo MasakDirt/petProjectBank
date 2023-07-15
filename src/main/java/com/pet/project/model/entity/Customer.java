@@ -49,18 +49,14 @@ public class Customer implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(name = "role_id")
     private Role role;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Card> myCards;
-
-    public String getName() {
-        return firstName + " " + lastName;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -113,5 +109,9 @@ public class Customer implements UserDetails {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 '}';
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
     }
 }
