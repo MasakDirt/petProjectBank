@@ -44,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(
                 account.getBalance().add(new BigDecimal(sum))
         );
+        cardService.update(account.getCard());
         return update(account);
     }
 
