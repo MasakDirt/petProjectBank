@@ -160,9 +160,10 @@ public class TransactionServiceTests {
     @Test
     public void checkDeleteTransaction() {
         int beforeDeleting = transactionService.getAll().size();
-        transactionService.delete(2L);
+        transactionService.delete(8L);
 
-        assertTrue(beforeDeleting > transactionService.getAll().size(),
+        int after =  transactionService.getAll().size();
+        assertTrue(beforeDeleting > after,
                 "Transactions size must be smaller than transactionService.getAll() size after deleting transaction");
     }
 
