@@ -21,7 +21,7 @@ public class Card {
 
     @Column(nullable = false, unique = true)
     private String number;
-
+    
     @JsonBackReference
     @JoinColumn(name = "account_id")
     @OneToOne(cascade = CascadeType.ALL)

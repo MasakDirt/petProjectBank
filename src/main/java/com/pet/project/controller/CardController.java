@@ -72,7 +72,6 @@ public class CardController {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readById(id);
         accountService.replenishBalance(response.getAccount().getId(), request.getSum());
-        cardService.update(response);
 
         log.info("=== PUT-CARD/{}-put === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.cardToCardResponse(response);
