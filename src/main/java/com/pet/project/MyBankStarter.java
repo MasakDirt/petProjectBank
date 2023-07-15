@@ -86,6 +86,8 @@ public class MyBankStarter implements CommandLineRunner {
         creatingFirstUser(admin);
         creatingSecondUser(user);
         creatingThirdUser(user);
+
+        log.info("Application run successfully!");
     }
 
     private void creatingFirstUser(Role role) {
