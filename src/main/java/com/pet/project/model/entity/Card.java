@@ -24,11 +24,11 @@ public class Card {
 
     @JsonBackReference
     @JoinColumn(name = "account_id")
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     private Account account;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(name = "owner_id")
     private Customer owner;
