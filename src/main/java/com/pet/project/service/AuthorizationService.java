@@ -44,9 +44,8 @@ public class AuthorizationService {
     }
 
     private boolean isCardOwner(String username, long cardId) {
-        return getCustomer(username).getMyCards()
-                .stream()
-                .anyMatch(card -> card.getId() == cardId);
+        var card = cardService.readByOwner(getCustomer(username), cardId);
+        return card != null;
     }
 
     private boolean isCardContainsTransaction(long cardId, long transactionId) {

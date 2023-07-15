@@ -6,6 +6,7 @@ import com.pet.project.model.entity.Account;
 import com.pet.project.model.entity.Card;
 import com.pet.project.model.entity.Customer;
 import com.pet.project.repository.AccountRepository;
+import com.pet.project.repository.CardRepository;
 import com.pet.project.service.AccountService;
 import com.pet.project.service.CardService;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final CardService cardService;
+    private final CardRepository cardRepository;
 
     @Override
     public Account create(Card card, Customer owner) {
@@ -28,7 +30,7 @@ public class AccountServiceImpl implements AccountService {
             var account = new Account();
             card.setAccount(account);
 
-            cardService.create(card, owner);
+            card = cardService.create(card, owner);
             account.setCard(card);
             return accountRepository.save(account);
         }
