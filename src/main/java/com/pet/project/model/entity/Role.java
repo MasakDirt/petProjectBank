@@ -1,10 +1,10 @@
 package com.pet.project.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -15,7 +15,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
@@ -27,7 +26,8 @@ public class Role implements GrantedAuthority {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private List<Customer> customers;
 
     @Override
@@ -46,5 +46,13 @@ public class Role implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return "ROLE_" + name;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

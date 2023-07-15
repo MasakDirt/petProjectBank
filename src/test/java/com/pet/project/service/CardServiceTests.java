@@ -48,7 +48,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkGetAll() {
+    public void test_GetAll() {
         assertAll(
                 () -> assertTrue(cardService.getAll().size() > 0,
                         "There must be more than 0 cards."),
@@ -58,7 +58,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkCreateMethod() {
+    public void test_CreateMethod() {
         var expected = cardService.create(new Card(), customerService.readById(2L));
 
         assertAll(
@@ -71,7 +71,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkNotValidCreate() {
+    public void test_Invalid_CardCreate() {
         assertAll(
                 () -> assertThrows(NullEntityReferenceException.class, () -> cardService.create(null, null),
                         "There need to be NullEntityReferenceException because we are pass null."),
@@ -82,7 +82,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkReadByIdCard() {
+    public void test_ReadByIdCard() {
         Card expected = cardService.create(new Card(), customerService.readById(1L));
 
         assertEquals(expected, cardService.readById(expected.getId()),
@@ -90,27 +90,27 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkNotValidReadByIdCard() {
+    public void test_Invalid_ReadByIdCard() {
         assertThrows(EntityNotFoundException.class, () -> cardService.readById(200000L),
                 "There might be EntityNotFoundException because we have not card with id 200000!");
     }
 
     @Test
-    public void checkDeleteCard() {
+    public void test_DeleteCard() {
         cardService.delete(3L);
 
         assertTrue(cards.size() > cardService.getAll().size(),
-                "There cards collection need to be bigger than get all, because of deleting one user from db.");
+                "There cards collection need to be bigger than get all, because of deleting one card from db.");
     }
 
     @Test
-    public void checkNotValidDeleteCard() {
+    public void test_Invalid_DeleteCard() {
         assertThrows(EntityNotFoundException.class, () -> cardService.delete(10000000L),
                 "There might be EntityNotFoundException because we have not card with id 0.");
     }
 
     @Test
-    public void checkUpdateCard() {
+    public void test_Update_Card() {
         Card expected = new Card();
         expected.setOwner(customerService.readById(3L));
         expected.setId(4L);
@@ -127,7 +127,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkNotValidUpdateCard() {
+    public void test_Invalid_UpdateCard() {
         checkExceptions(
                 () -> cardService.update(new Card()),
                 () -> cardService.update(null)
@@ -135,7 +135,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkReadCardByNumber() {
+    public void test_ReadCardByNumber() {
         var card = new Card();
         Card expected = cardService.create(card, customerService.readById(1L));
 
@@ -154,7 +154,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkReadByOwnerCard() {
+    public void test_ReadByOwnerCard() {
         Customer owner = customerService.readById(3L);
 
         Card expected = cardService.create(new Card(), owner);
@@ -168,7 +168,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkInvalidReadByOwnerCard() {
+    public void test_Invalid_ReadByOwnerCard() {
         assertAll(
                 () -> assertThrows(EntityNotFoundException.class, () -> cardService.readByOwner(customerService.readById(2L), 10L),
                         "There we will get EntityNotFoundException because we have not customer`s card with id 10."),
@@ -178,7 +178,7 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkGetAllByOwnerCards() {
+    public void test_GetAllByOwnerCards() {
         Customer customer = customerService.readById(2L);
         List<Card> expected = customer.getMyCards();
 
@@ -187,13 +187,13 @@ public class CardServiceTests {
     }
 
     @Test
-    public void checkInvalidGetAllByOwnerCards() {
+    public void test_Invalid_GetAllByOwnerCards() {
         assertThrows(NullEntityReferenceException.class, () -> cardService.getAllByOwner(null),
                 "There we will get NullEntityReferenceException because of null parameter.");
     }
 
     @Test
-    public void checkGetHistory() {
+    public void test_GetHistory() {
         Card card = cardService.readById(2L);
         List<Transaction> expected = card.getAccount().getTransactions();
 

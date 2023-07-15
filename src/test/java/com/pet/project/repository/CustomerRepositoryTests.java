@@ -36,7 +36,7 @@ public class CustomerRepositoryTests {
     }
 
     @Test
-    public void checkFindCustomerByEmail() {
+    public void test_FindCustomerByEmail() {
         Customer expected = new Customer();
         expected.setId(4L);
         expected.setRole(roleRepository.findByName("USER").get());

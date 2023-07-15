@@ -43,7 +43,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkGetAll() {
+    public void test_GetAll() {
         assertAll(
                 () -> assertTrue(roleService.getAll().size() > 0,
                         "There must be more than 0 roles."),
@@ -53,7 +53,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkCreateMethod() {
+    public void test_CreateMethod() {
         Role role = new Role();
         role.setName("NewRole");
         roleService.create(role);
@@ -68,7 +68,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkNotValidCreateMethod() {
+    public void test_NotValid_CreateMethod() {
         assertAll(
                 () -> assertThrows(NullEntityReferenceException.class, () -> roleService.create(null),
                         "There need to be NullEntityReferenceException because we are pass null."),
@@ -79,24 +79,24 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkReadByIdRole() {
+    public void test_ReadByIdRole() {
         Role expected = new Role();
         expected.setId(5L);
         expected.setName("newRole");
-        roleService.create(expected);
+        expected = roleService.create(expected);
 
         assertEquals(expected, roleService.readById(expected.getId()),
                 "Roles need to be equals, if it isn`t, please check rolesId");
     }
 
     @Test
-    public void checkInvalidReadByIdRole() {
+    public void test_Invalid_ReadByIdRole() {
         assertThrows(EntityNotFoundException.class, () -> roleService.readById(10000L),
                 "There must be EntityNotFoundException because we have not role with id 10000");
     }
 
     @Test
-    public void checkUpdateRole() {
+    public void test_UpdateRole() {
         Role expected = new Role();
         expected.setId(2L);
         expected.setName("updateRole");
@@ -107,7 +107,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkInvalidUpdateRole() {
+    public void test_Invalid_UpdateRole() {
         Role invalidRole = new Role();
         invalidRole.setId(1000000L);
 
@@ -124,7 +124,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkDeleteRole() {
+    public void test_DeleteRole() {
         roleService.delete(2L);
 
         assertTrue(roles.size() > roleService.getAll().size(),
@@ -132,12 +132,12 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkReadByNameRole() {
+    public void test_ReadByNameRole() {
         Role expected = new Role();
         expected.setId(4L);
         expected.setName("RoleForReading");
 
-        roleService.create(expected);
+        expected = roleService.create(expected);
 
         Role actual = roleService.readByName("RoleForReading");
         assertEquals(expected, actual,
@@ -145,7 +145,7 @@ public class RoleServiceTests {
     }
 
     @Test
-    public void checkInvalidReadByNameRole() {
+    public void test_Invalid_ReadByNameRole() {
         assertAll(
                 () ->  assertThrows(EntityNotFoundException.class, () -> roleService.readByName("invalidName"),
                         "There should be EntityNotFoundException because in DB we haven`t role with this name!"),

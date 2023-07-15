@@ -1,5 +1,6 @@
 package com.pet.project.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,20 +27,25 @@ public class Transaction {
     @CreationTimestamp
     private LocalDateTime doneAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @NotNull
     @DecimalMin(value = "0.1", message = "Transfer amount cannot be less than 0.1")
     private BigDecimal transferAmount;
 
+    @NotNull
     @DecimalMin(value = "0", message = "Balance cannot be less than 0")
     private BigDecimal balanceAfter;
 
+    @NotNull
     @DecimalMax(value = "0", message = "Withdrawals cannot be bigger than 0")
     private BigDecimal fundsWithdrawn;
 
-    @JoinColumn(name = "recipient_card_id")
+    @NotBlank
+    @JoinColumn(name = "recipient_card_number")
     private String recipientCard;
 
     public Transaction() {

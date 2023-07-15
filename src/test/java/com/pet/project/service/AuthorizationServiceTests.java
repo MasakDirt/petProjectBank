@@ -114,7 +114,8 @@ public class AuthorizationServiceTests {
         assertAll(
                 () -> assertFalse(authorizationService.isUserValidUserAndIsCardOwner(customer.getUsername(), 100000, customer.getMyCards().get(0).getId()),
                         "Here must be false because our customer isn`t has 100000 id."),
-                () -> assertFalse(authorizationService.isUserValidUserAndIsCardOwner(customer.getUsername(), customer.getId(), 1000000),
+                () -> assertThrows(EntityNotFoundException.class,
+                        () -> authorizationService.isUserValidUserAndIsCardOwner(customer.getUsername(), customer.getId(), 1000000),
                         "Here must be false because our customers card isn`t has 1000000 id.")
         );
     }
@@ -174,8 +175,10 @@ public class AuthorizationServiceTests {
         customer.setRole(user);
 
         assertAll(
-                () -> assertFalse(authorizationService.isUserAdminOrValidUserAndIsCardOwner(customer.getUsername(), customer.getId(), 0),
+                () -> assertThrows(EntityNotFoundException.class,
+                        () -> authorizationService.isUserAdminOrValidUserAndIsCardOwner(customer.getUsername(), customer.getId(), 0),
                         "Here must be false because customers card id not equal to 0."),
+
                 () -> assertFalse(authorizationService.isUserAdminOrValidUserAndIsCardOwner(customer.getUsername(), 0, customer.getId()),
                         "Here must be false because customer id not equal to 0.")
         );
@@ -210,11 +213,13 @@ public class AuthorizationServiceTests {
                                 customer.getMyCards().get(0).getId(), customer.getMyCards().get(0).getAccount().getTransactions().get(0).getId()),
                         "Here must be false because customers card id not equal to 0."),
 
-                () -> assertFalse(authorizationService.isUserAdminOrValidUserAndIsCardOwnerAndIsCardContainsTransaction(customer.getUsername(), customer.getId(),  0,
+                () -> assertThrows(EntityNotFoundException.class,
+                        () -> authorizationService.isUserAdminOrValidUserAndIsCardOwnerAndIsCardContainsTransaction(customer.getUsername(), customer.getId(), 0,
                                 customer.getMyCards().get(0).getAccount().getTransactions().get(0).getId()),
                         "Here must be false because card id not equal to 0."),
 
-                () -> assertFalse(authorizationService.isUserAdminOrValidUserAndIsCardOwnerAndIsCardContainsTransaction(customer.getUsername(), customer.getId(),  customer.getMyCards().get(0).getId(),0),
+                () -> assertFalse(authorizationService.isUserAdminOrValidUserAndIsCardOwnerAndIsCardContainsTransaction
+                                (customer.getUsername(), customer.getId(), customer.getMyCards().get(0).getId(), 0),
                         "Here must be false because transaction id not equal to 0.")
         );
     }

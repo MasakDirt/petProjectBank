@@ -52,10 +52,11 @@ public class CustomerServiceTests {
     void injectedComponentsAreNotNull() {
         assertThat(customerService).isNotNull();
         assertThat(roleService).isNotNull();
+        assertThat(customers).isNotNull();
     }
 
     @Test
-    public void checkGetAllMethod() {
+    public void test_GetAllMethod() {
         assertAll(
                 () -> assertTrue(customerService.getAll().size() > 0,
                         "There must be more than 0 customers."),
@@ -66,7 +67,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkCreateUser() {
+    public void test_Create_User() {
         int sizeCustomersBefore = customerService.getAll().size();
         customerService.create(validCustomer, roleService.readById(2L));
 
@@ -75,7 +76,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkNotValidUserCreate() {
+    public void test_Invalid_UserCreate() {
         assertAll(
                 () -> assertThrows(NullEntityReferenceException.class, () -> customerService.create(null, roleService.readById(2L)),
                         "There need to be NullEntityReferenceException because we are pass null."),
@@ -86,7 +87,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkReadByIdUser() {
+    public void test_ReadByIdUser() {
         validCustomer = customerService.create(validCustomer, roleService.readById(2L));
         Customer actual = customerService.readById(validCustomer.getId());
 
@@ -94,13 +95,13 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkNotValidReadByIdUser() {
+    public void test_Invalid_ReadByIdUser() {
         assertThrows(EntityNotFoundException.class, () -> customerService.readById(200000L),
                 "There might be EntityNotFoundException because we have not customer with id 200000!");
     }
 
     @Test
-    public void checkDeleteCustomer() {
+    public void test_DeleteCustomer() {
         customerService.delete(3L);
 
         assertTrue(customers.size() > customerService.getAll().size(),
@@ -108,13 +109,13 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkNotValidDeleteUser() {
+    public void test_Invalid_DeleteUser() {
         assertThrows(EntityNotFoundException.class, () -> customerService.delete(0),
                 "There might be EntityNotFoundException because we have not customer with id 0.");
     }
 
     @Test
-    public void checkUpdateUser() {
+    public void test_UpdateUser() {
         Customer actual = customerService.readById(1L);
         actual.setEmail("newEmail@mail.co");
         customerService.update(actual, "1111");
@@ -129,7 +130,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkNotValidUpdate() {
+    public void test_Invalid_Update() {
         assertAll(
                 () -> assertThrows(EntityNotFoundException.class, () -> customerService.update(new Customer(),""),
                         "There we will get EntityNotFoundException because we have not customer with id 0 and theirs password don`t equals."),
@@ -140,7 +141,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkFindByEmailUser() {
+    public void test_FindByEmailUser() {
         customerService.create(validCustomer, roleService.readById(2L));
         Customer actual = customerService.loadUserByUsername(validCustomer.getEmail());
 
@@ -150,7 +151,7 @@ public class CustomerServiceTests {
     }
 
     @Test
-    public void checkNotValidFindByEmail() {
+    public void test_NotValid_FindByEmail() {
         assertAll(
                 () -> assertThrows(EntityNotFoundException.class, () -> customerService.loadUserByUsername("fakeEmailForTests@mail.co"),
                         "There we will get EntityNotFoundException because we have not customer in DB with that email"),

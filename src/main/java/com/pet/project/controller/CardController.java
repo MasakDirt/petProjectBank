@@ -45,7 +45,7 @@ public class CardController {
 
     @GetMapping("/{id}")
     @PreAuthorize("@authorizationService.isUserAdminOrValidUserAndIsCardOwner(authentication.principal, #ownerId, #id)")
-    CardResponse getCardById(@PathVariable("owner-id") long ownerId, @PathVariable long id, Authentication authentication) {
+    CardResponse getCardById(@PathVariable("owner-id") long ownerId, @PathVariable("id") long id, Authentication authentication) {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readByOwner(customerService.readById(ownerId), id);
 
@@ -72,7 +72,6 @@ public class CardController {
         var principal = customerService.loadUserByUsername(authentication.getName());
         var response = cardService.readById(id);
         accountService.replenishBalance(response.getAccount().getId(), request.getSum());
-        cardService.update(response);
 
         log.info("=== PUT-CARD/{}-put === auth.name = {}", getRole(principal), principal.getUsername());
         return mapper.cardToCardResponse(response);

@@ -1,5 +1,6 @@
 package com.pet.project.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Random;
+
 @Getter
 @Setter
 @Table(name = "card")
@@ -19,13 +21,15 @@ public class Card {
 
     @Column(nullable = false, unique = true)
     private String number;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    
+    @JsonBackReference
     @JoinColumn(name = "account_id")
+    @OneToOne(cascade = CascadeType.ALL)
     private Account account;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "owner_id")
     private Customer owner;
 

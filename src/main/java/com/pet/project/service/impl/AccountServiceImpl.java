@@ -28,7 +28,7 @@ public class AccountServiceImpl implements AccountService {
             var account = new Account();
             card.setAccount(account);
 
-            cardService.create(card, owner);
+            card = cardService.create(card, owner);
             account.setCard(card);
             return accountRepository.save(account);
         }
@@ -44,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(
                 account.getBalance().add(new BigDecimal(sum))
         );
+        cardService.update(account.getCard());
         return update(account);
     }
 

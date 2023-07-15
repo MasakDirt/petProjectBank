@@ -51,7 +51,7 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkGetAllMethod() {
+    public void test_GetAll() {
         assertAll(
                 () -> assertTrue(accountService.getAll().size() > 0,
                         "There must be more than 0 accounts."),
@@ -62,7 +62,7 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkAccountCreate() {
+    public void test_AccountCreate() {
         Account account = accountService.create(cardService.readById(2L), customerService.readById(2L));
 
         assertAll(
@@ -75,13 +75,13 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkNotValidAccountCreating() {
+    public void test_Invalid_AccountCreating() {
         assertThrows(NullEntityReferenceException.class, () -> accountService.create(null, null),
                 "There need to be NullEntityReferenceException because we are pass null.");
     }
 
     @Test
-    public void checkReplenishBalanceAccount() {
+    public void test_ReplenishBalanceAccount() {
         Account expected = accountService.readById(3L);
         BigDecimal balanceBefore = expected.getBalance();
 
@@ -98,7 +98,7 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkInvalidReplenishBalanceAccount() {
+    public void test_Invalid_ReplenishBalanceAccount() {
         assertAll(
                 () -> assertThrows(InvalidAmountException.class, () -> accountService.replenishBalance(4L, -12),
                         "Sum must be greater than 0.1, so we have InvalidAmountException"),
@@ -109,7 +109,7 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkUpdateMethod() {
+    public void test_UpdateMethod() {
 
         Account actual = new Account();
         actual.setId(4L);
@@ -130,7 +130,7 @@ public class AccountServiceTests {
 
 
     @Test
-    public void checkNotValidUpdateMethod() {
+    public void test_Invalid_UpdateMethod() {
         Account actual = new Account();
         actual.setId(100000L);
         assertAll(
@@ -146,11 +146,17 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkReadByIdMethod() {
+    public void test_ReadByIdMethod() {
+        Transaction transaction = new Transaction();
+        transaction.setTransferAmount(BigDecimal.valueOf(0.1));
+        transaction.setFundsWithdrawn(BigDecimal.valueOf(-0.1));
+        transaction.setBalanceAfter(BigDecimal.valueOf(0));
+        transaction.setRecipientCard("7835 7138 5614 4656");
+
         Account expected = new Account();
         expected.setId(3);
         expected.setBalance(new BigDecimal(20));
-        expected.setTransactions(List.of(new Transaction()));
+        expected.setTransactions(List.of(transaction));
         expected.setCard(cardService.readById(1L));
         accountService.update(expected);
 
@@ -159,7 +165,7 @@ public class AccountServiceTests {
     }
 
     @Test
-    public void checkNotValidReadByIdMethod() {
+    public void test_Invalid_ReadByIdMethod() {
         assertThrows(EntityNotFoundException.class, () -> accountService.readById(20000L),
                 "There might be EntityNotFoundException because we have not account with id 20000");
     }

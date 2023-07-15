@@ -38,10 +38,11 @@ public class CardRepositoryTests {
     void injectedComponentsAreNotNull() {
         assertThat(customerRepository).isNotNull();
         assertThat(cardRepository).isNotNull();
+        assertThat(accountRepository).isNotNull();
     }
 
     @Test
-    public void checkFindCardByOwnerAndId() {
+    public void test_FindCardByOwnerAndId() {
         Customer owner = customerRepository.getOne(1L);
 
         var expected = cardRepository.save(createNewCard());
@@ -53,7 +54,7 @@ public class CardRepositoryTests {
     }
 
     @Test
-    public void checkFindCardByNumber() {
+    public void test_FindCardByNumber() {
         var expected = cardRepository.save(createNewCard());
 
         Card actual = cardRepository.findCardByNumber(expected.getNumber())
