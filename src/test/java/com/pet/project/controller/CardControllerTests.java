@@ -63,6 +63,9 @@ public class CardControllerTests {
     void injectedComponentsAreNotNull() {
         assertThat(mvc).isNotNull();
         assertThat(cardService).isNotNull();
+        assertThat(customerService).isNotNull();
+        assertThat(mapper).isNotNull();
+        assertThat(BASIC_URL).isEqualTo("/api/customers/{owner-id}/cards");
     }
 
     @Test
@@ -99,7 +102,7 @@ public class CardControllerTests {
                 .andExpect(result ->
                         assertEquals(asJsonString(mapper.cardToCardResponse(expected)),
                                 result.getResponse().getContentAsString(),
-                                "Cards must be equal!"));
+                                "Cards reads by owner must be equal!"));
     }
 
     @Test
