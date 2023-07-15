@@ -25,10 +25,11 @@ public class Account {
     private BigDecimal balance;
 
     @OneToOne(mappedBy = "account", fetch = FetchType.EAGER)
+    @JoinColumn(name = "card_id")
     private Card card;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
     public Account() {
