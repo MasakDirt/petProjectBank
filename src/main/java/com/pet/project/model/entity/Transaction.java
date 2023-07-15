@@ -25,7 +25,7 @@ public class Transaction {
     @CreationTimestamp
     private LocalDateTime doneAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     @JoinColumn(name = "account_id")
     private Account account;
@@ -39,7 +39,7 @@ public class Transaction {
     @DecimalMax(value = "0", message = "Withdrawals cannot be bigger than 0")
     private BigDecimal fundsWithdrawn;
 
-    @JoinColumn(name = "recipient_card_id")
+    @JoinColumn(name = "recipient_card_number")
     private String recipientCard;
 
     public Transaction() {
