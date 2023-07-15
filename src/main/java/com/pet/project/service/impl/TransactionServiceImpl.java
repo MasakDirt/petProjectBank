@@ -81,7 +81,7 @@ public class TransactionServiceImpl implements TransactionService {
         var transaction = new Transaction();
         transaction.setAccount(account);
         transaction.setRecipientCard(cardNumber);
-        transaction.setTransferAmount(new BigDecimal(transferAmount));
+        transaction.setTransferAmount(BigDecimal.valueOf(transferAmount));
 
         return transaction;
     }
@@ -90,13 +90,13 @@ public class TransactionServiceImpl implements TransactionService {
         var account = transaction.getAccount();
 
         transaction.setBalanceAfter(
-               account.getBalance().subtract(new BigDecimal(transferAmount))
+               account.getBalance().subtract(BigDecimal.valueOf(transferAmount))
         );
 
         account.setBalance(transaction.getBalanceAfter());
 
         recipientCard.getAccount().setBalance(
-                recipientCard.getAccount().getBalance().add(new BigDecimal(transferAmount))
+                recipientCard.getAccount().getBalance().add(BigDecimal.valueOf(transferAmount))
         );
 
         transaction.setFundsWithdrawn(new BigDecimal("-" + transferAmount));
