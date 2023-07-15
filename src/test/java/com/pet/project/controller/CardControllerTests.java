@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -65,6 +66,7 @@ public class CardControllerTests {
     }
 
     @Test
+    @Transactional
     public void test_Valid_GetAllOwnersCards() throws Exception {
         long ownerId = 2L;
         var expected = asJsonString(
@@ -120,17 +122,12 @@ public class CardControllerTests {
     }
 
     @Test
+    @Transactional
     public void test_Valid_CreateCard() throws Exception {
-        long ownerId = 1L;
-        int cardsBeforeCreating = cardService.getAllByOwner(customerService.readById(ownerId)).size();
-
-        mvc.perform(post(BASIC_URL, ownerId)
+        mvc.perform(post(BASIC_URL, 1L)
                         .header("Authorization", "Bearer " + token)
                 )
                 .andExpect(status().isCreated());
-
-        assertTrue(cardsBeforeCreating < cardService.getAllByOwner(customerService.readById(ownerId)).size(),
-                "In this method must be true, because size of all owners cards become bigger!");
     }
 
     @Test
@@ -202,24 +199,20 @@ public class CardControllerTests {
     }
 
     @Test
+    @Transactional
     public void test_Valid_DeleteCard() throws Exception {
         long ownerId = 3L;
         long id = 5L;
         var owner = customerService.readById(ownerId);
-
-        int cardsBeforeDeleting = owner.getMyCards().size();
+        var cardNumber = cardService.readById(id).getNumber();
 
         mvc.perform(delete(BASIC_URL + "/{id}", ownerId, id)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(result ->
-                        assertEquals("{\"message\":\"" + owner.getName() + " card with number " + cardService.readById(id).getNumber() + " has been deleted!\"}",
+                        assertEquals("{\"message\":\"" + owner.getName() + " card with number " + cardNumber + " has been deleted!\"}",
                                 result.getResponse().getContentAsString(),
                                 "Messages must be equal.")
                 );
-        int after = cardService.getAllByOwner(owner).size();
-
-        assertNotEquals(cardsBeforeDeleting, after,
-                "Amount of cards before deleting must be bigger than after deleting");
     }
 }

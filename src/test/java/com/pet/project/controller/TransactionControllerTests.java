@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
@@ -82,6 +83,7 @@ public class TransactionControllerTests {
     }
 
     @Test
+    @Transactional
     public void test_Valid_GetAllTransaction() throws Exception {
         long ownerId = 2L;
         long cardId = 3L;
