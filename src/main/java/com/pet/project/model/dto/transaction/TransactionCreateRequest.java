@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
@@ -14,6 +15,7 @@ import javax.validation.constraints.DecimalMin;
 @NoArgsConstructor
 public class TransactionCreateRequest {
 
+    @Pattern(regexp = "\\d{4} \\d{4} \\d{4} \\d{4}", message = "Invalid credit card number format")
     @JsonProperty("card_number")
     private String cardNumber;
 

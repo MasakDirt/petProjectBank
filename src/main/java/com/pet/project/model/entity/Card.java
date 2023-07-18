@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 import java.util.Random;
 
@@ -19,6 +20,7 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Pattern(regexp = "\\d{4} \\d{4} \\d{4} \\d{4}", message = "Invalid credit card number format")
     @Column(nullable = false, unique = true)
     private String number;
     

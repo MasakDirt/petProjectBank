@@ -6,10 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -44,7 +41,8 @@ public class Transaction {
     @DecimalMax(value = "0", message = "Withdrawals cannot be bigger than 0")
     private BigDecimal fundsWithdrawn;
 
-    @NotBlank
+    @NotNull
+    @Pattern(regexp = "\\d{4} \\d{4} \\d{4} \\d{4}", message = "Invalid credit card number format")
     @JoinColumn(name = "recipient_card_number")
     private String recipientCard;
 
